@@ -3,7 +3,8 @@ let people = {
     "Doja", "Bryan", "Emma", "Carlos", "Tyra",
     "Sophia", "Liam", "Mia", "Noah", "Olivia",
     "Ethan", "Ava", "James", "Isabella", "Lucas",
-    "Charlotte", "Mason", "Amelia", "Benjamin", "Harper"
+    "Charlotte", "Mason", "Amelia", "Benjamin", "Harper",
+    "Salem"
   ],
   surname: [
     "Benz", "Hamilton", "Smith", "Doe", "Lee", "Ramirez",
@@ -54,6 +55,18 @@ class Group {
 - Number of Passengers: ${totalPassengers}
 - Total Price: $${totalPrice}
 `);
+    let groupNumber = document.createElement("h3");
+    groupNumber.innerHTML = `Group ${this.groupNumber}`;
+    let groupTotalPassengers = document.createElement("h4");
+    groupTotalPassengers.innerHTML = `Number of Passengers: ${totalPassengers}`;
+    let groupTotalPrice = document.createElement("h4");
+    groupTotalPrice.innerHTML = `Total Price: $${totalPrice}`;
+    let groupInfo = document.createElement("div");
+    groupInfo.className = `group-info`;
+    groupInfo.appendChild(groupNumber);
+    groupInfo.appendChild(groupTotalPassengers);
+    groupInfo.appendChild(groupTotalPrice);
+    document.body.appendChild(groupInfo);
   }
 
   displayPassengers() {
@@ -95,8 +108,15 @@ function createMultipleGroups(sizes) {
   return groups;
 }
 
-function horizontalLine() {
-  console.log("\x1b[33m" + "-".repeat(50) + "\x1b[0m"); 
+function horizontalLine(number) {
+  console.log("\x1b[33m" + "-".repeat(50) + "\x1b[0m");
+  line = document.createElement("div");
+  line.style.width = "100%";
+  line.style.height = "1px";
+  line.style.margin = "1rem 0";
+  line.style.borderBottom = "1px solid #000";
+  line.className = `horizontal-line-${number}`;
+  document.body.appendChild(line);
 }
 
 const groupSizes = [3, 1];
@@ -108,12 +128,14 @@ groups.push(createGroup(4));
 // Display Groups and Passengers
 function displayAllGroups(groups) {
   groups.forEach((group, index) => {
-    if (index > 0) horizontalLine(); // Add separation between groups
+    if (index > 0) horizontalLine(index); // Add separation between groups
     group.groupInfo();
     group.displayPassengers();
   });
 }
 
-// Initial display
-console.log("\x1b[32mAll Groups:\x1b[0m");
-displayAllGroups(groups);
+groupsButton = document.getElementById("groupsButton").addEventListener("click", function() {
+  console.clear();
+  subtitle = document.getElementById("subtitle").innerHTML = "All Groups:";
+  displayAllGroups(groups);
+});

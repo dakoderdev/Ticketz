@@ -1,0 +1,26 @@
+:root {
+    --primary-color: #FFF9B7;
+}
+
+body {
+    font-family: "Helvetica", sans-serif;
+}
+
+.group-info {
+    background-color: var(--primary-color);
+    padding: 1rem;
+    border-radius: 1.35rem;
+}
+
+h3 {
+    background-color: #000;
+    color: var(--primary-color);
+    padding: 0.35rem 0.75rem;
+    margin:0;
+    border-radius: 0.35rem;
+    width: fit-content;
+}
+
+h4 {
+    margin:0.25rem 0;
+}
