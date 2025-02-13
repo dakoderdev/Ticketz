@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Ticketz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">    <title>Ticketz</title>
 </head>
 <body>
-    <h1>Ticketz</h1>
-    <button id="groupsButton">Display all groups</button>
-    <h2 id="subtitle"></h2>
+    <nav>
+        <img class="Logo" src="Logo.svg" />
+        <button id="groupsButton">Randomize group <input type="number" id="groupInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*"></button>
+        <button id="addButton">Add group <input type="number" id="addInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*"></button>
+        <button id="locationButton">Randomize location</button>
+    </nav>
+    <h2>Viaje <b id="location">Rio de Janeiro</b></h2>
 </body>
 </html>
 <script src="ticket.js"></script>
