@@ -21,7 +21,13 @@ let locations = [
   "Dubai", "Mumbai", "Beijing", "Seoul", "Mexico City",
   "São Paulo", "Madrid", "Rome", "Bangkok", "Istanbul"
 ];
-  
+
+function createEl(tag, text, className) {
+  const el = document.createElement(tag);
+  if (text) el.textContent = text;
+  if (className) el.className = className;
+  return el;
+}
 
 class Person {
   static passengerCount = 0;
@@ -36,24 +42,13 @@ class Person {
   }
 
   info(passengersInfo) {
-      let passengerNumber = document.createElement("h4");
-      passengerNumber.innerHTML = `Passenger ${this.passengerNumber}`;
-      passengerNumber.className = `passenger-number`;
-      let passengerFullName = document.createElement("p");
-      passengerFullName.innerHTML = `${this.name} ${this.surname}`;
-      passengerFullName.className = `passenger-name`;
-      let passengerAge = document.createElement("p");
-      passengerAge.innerHTML = `Age: ${this.age}`;
-      let passengerPrice = document.createElement("p");
-      passengerPrice.innerHTML = `Price: $${this.price}`;
-      let passengerInfo = document.createElement("div");
-      passengerInfo.className = `passenger-info`;
-      passengerInfo.appendChild(passengerNumber);
-      passengerInfo.appendChild(passengerFullName);
-      passengerInfo.appendChild(passengerAge);
-      passengerInfo.appendChild(passengerPrice);
-      passengersInfo.appendChild(passengerInfo);
-  }
+      const passengerInfo = createEl("div", null, "passenger-info");
+      const passengerNumber = createEl("h4", `Passenger ${this.passengerNumber}`, "passenger-number");
+      const passengerFullName = createEl("p", `${this.name} ${this.surname}`, "passenger-name");
+      const passengerAge = createEl("p", `Age: ${this.age}`);
+      const passengerPrice = createEl("p", `Price: $${this.price}`);
+      passengerInfo.append(passengerNumber, passengerFullName, passengerAge, passengerPrice);
+      passengersInfo.appendChild(passengerInfo);  }
 }
 
 class Group {
@@ -73,28 +68,22 @@ class Group {
   groupInfo(groupContainer) {
     const totalPassengers = this.passengers.length;
     const totalPrice = this.passengers.reduce((sum, p) => sum + p.price, 0);
-    
-    let groupNumber = document.createElement("h3");
-    groupNumber.innerHTML = `Group ${this.groupNumber}`;
-    let groupTotalPassengers = document.createElement("h4");
-    groupTotalPassengers.innerHTML = `${totalPassengers} passengers total`;
-    let groupTotalPrice = document.createElement("h4");
-    groupTotalPrice.innerHTML = `$${totalPrice}`;
-    groupTotalPrice.className = `price`;
-    let groupInfo = document.createElement("div");
-    groupInfo.className = `group-info`;
-    groupInfo.appendChild(groupNumber);
-    groupInfo.appendChild(groupTotalPassengers);
-    groupInfo.appendChild(groupTotalPrice);
+
+    const groupNumber = createEl("h3", `Group ${this.groupNumber}`);
+    const groupTotalPassengers = createEl("h4", `${totalPassengers} passengers total`);
+    const groupTotalPrice = createEl("h4", `$${totalPrice}`, "price");
+    const groupInfo = createEl("div", null, "group-info");
+
+    groupInfo.append(groupNumber, groupTotalPassengers, groupTotalPrice);
     groupContainer.appendChild(groupInfo);
-  }
+}
 
   displayPassengers(groupContainer) {
-    let passengersInfo = document.createElement("div");
-    passengersInfo.className = `passengers-info`;
-    this.passengers.forEach((passenger) => passenger.info(passengersInfo));
+    const passengersInfo = createEl("div", null, "passengers-info");
+    this.passengers.map(passenger => passenger.info(passengersInfo));
     groupContainer.appendChild(passengersInfo);
   }
+
 }
 
 let groupCounter = 0;
@@ -134,12 +123,21 @@ function createMultipleGroups(sizes) {
 // Display Groups and Passengers
 function displayAllGroups(groups) {
   document.querySelectorAll(".group-container").forEach((group) => group.remove());
-  groups.forEach((group, index) => {
-    let groupContainer = document.createElement("section");
-    groupContainer.className = `group-container`;
+
+  let mainContainer = document.querySelector("main");
+  if (!mainContainer) {
+    mainContainer = createEl("main");
+    document.body.appendChild(mainContainer);
+  } else {
+    mainContainer.innerHTML = ""; // Clear previous content if <main> exists
+  }
+
+
+  groups.forEach((group) => {
+    const groupContainer = createEl("section", null, "group-container");
     group.groupInfo(groupContainer);
     group.displayPassengers(groupContainer);
-    document.body.appendChild(groupContainer);
+    mainContainer.appendChild(groupContainer);
   });
 }
 
@@ -162,23 +160,36 @@ document.getElementById("groupsButton").addEventListener("click", function() {
   const groupSizes = generateRandomGroupSizes();
   groups = createMultipleGroups(groupSizes);
   displayAllGroups(groups);
+
+  const firstGroup = document.querySelector(".group-container:first-child");
+  if (firstGroup) {
+    firstGroup.scrollIntoView();
+  }
 });
 
 document.getElementById("addButton").addEventListener("click", function() {
   let input = document.getElementById("addInput").value;
-  if (input === "") input = 1;
   for (let i = 0; i < input ; i++) {
     const newGroup = createGroup(Math.floor(Math.random() * 12) + 1);
     groups.push(newGroup);
   }
   displayAllGroups(groups);
+
+  const lastGroup = document.querySelector(".group-container:last-child");
+  if (lastGroup) {
+    lastGroup.scrollIntoView();
+  }
 });
 
 document.getElementById("locationButton").addEventListener("click", function() {
   const randomLocation = Math.floor(Math.random() * locations.length);
   const locationElement = document.getElementById("location");
-  locationElement.innerHTML = "";
   locationElement.innerHTML = locations[randomLocation];
+
+  const viewScroll = document.querySelector("#location");
+  if (viewScroll) {
+    viewScroll.scrollIntoView();
+  }
 });
 
 document.getElementById("groupInput").addEventListener("click", function(event) {
