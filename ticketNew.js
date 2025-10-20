@@ -42,17 +42,64 @@ function skewedLowerRandom(max) {
     return Math.min(Math.max(1, size), max);
 }
 
-function input(field, randomBool) {
+function createElement(tag, text, className) {
+    const el = document.createElement(tag);
+    if (text) el.textContent = text;
+    if (className) el.className = className;
+    return el;
+}
+
+// --- FUNCIÓN DE ENTRADA MEJORADA Y ROBUSTA ---
+function input(field, randomBool, promptMessage = "passenger", ageMin, ageMax) {
     let result;
-    switch (field) {
-        case "name":
-            result = randomBool ? people.name[floorRandom(people.name.length)] : prompt("Enter name:");
-            break;
-        case "surname":
-            result = randomBool ? people.surname[floorRandom(people.surname.length)] : prompt("Enter surname:");
-            break;
+
+    if (randomBool) {
+        // Generación aleatoria para grupos NO personalizados
+        switch (field) {
+            case "name":
+                return people.name[floorRandom(people.name.length)];
+            case "surname":
+                return people.surname[floorRandom(people.surname.length)];
+            // La edad aleatoria ahora se genera en las clases Adult/Child
+        }
+    } else {
+        // Entrada manual para grupos personalizados
+        let isValid = false;
+        
+        while (!isValid) {
+            switch (field) {
+                case "name":
+                    result = prompt(`Enter name for ${promptMessage}:`);
+                    break;
+                case "surname":
+                    result = prompt(`Enter surname for ${promptMessage}:`);
+                    break;
+                case "age":
+                    // Validación especial para la edad
+                    let ageInput = prompt(`Enter age for ${promptMessage} (Min: ${ageMin}, Max: ${ageMax}):`);
+                    let parsedAge = parseInt(ageInput);
+                    
+                    if (ageInput === null) return null; // Permite cancelar el prompt
+                    
+                    if (!isNaN(parsedAge) && parsedAge >= ageMin && parsedAge <= ageMax) {
+                        return parsedAge;
+                    }
+                    alert(`Invalid age. Please enter a number between ${ageMin} and ${ageMax}.`);
+                    continue; // Vuelve a intentar la edad
+            }
+
+            // Validación de nombre/apellido (no nulo y no vacío)
+            if (result !== null && result.trim() !== "") {
+                isValid = true;
+            } else if (result === null) {
+                // Si el usuario presiona Cancelar, salimos
+                return null;
+            } else {
+                alert(`Input cannot be empty for ${promptMessage}'s ${field}.`);
+            }
+        }
+        return result;
     }
-    return result;
 }
 
 class Passenger {
@@ -64,19 +111,54 @@ class Passenger {
         this.age = age;
         this.price = price;
     }
+
+    info(passengersInfo) {
+        const passengerInfo = createElement("div", null, "passenger-info");
+        const passengerNumber = createElement("h4", `Passenger ${this.id}`, "passenger-number");
+        const passengerFullName = createElement("p", `${this.name} ${this.surname}`, "passenger-name");
+        const passengerAge = createElement("p", `Age: ${this.age}`);
+        const passengerPrice = createElement("p", `Price: $${this.price}`);
+        
+        const passengerType = createElement("p", `Type: ${this.type}`);
+        
+        passengerInfo.append(passengerNumber, passengerFullName, passengerType, passengerAge, passengerPrice);
+        passengersInfo.appendChild(passengerInfo);
+    }
 }
 
 class Adult extends Passenger {
-    constructor(name, surname, groupID) {
-        const age = floorRandom(45) + 21; 
+    constructor(name, surname, groupID, randomBool) {
+        let age;
+        const ageMin = 18;
+        const ageMax = randomBool ? 65 : 120;
+
+        if (randomBool) {
+            age = floorRandom(ageMax - ageMin + 1) + ageMin;
+        } else {
+            // Edad manual
+            age = input("age", false, `Adult`, ageMin, ageMax);
+            if (age === null) throw new Error("Passenger creation cancelled by user.");
+        }
+        
         super(name, surname, groupID, age, 200); 
         this.type = "Adult";
     }
 }
 
 class Child extends Passenger {
-    constructor(name, surname, groupID) {
-        const age = floorRandom(16) + 5; 
+    constructor(name, surname, groupID, randomBool) {
+        let age;
+        const ageMin = 5;
+        const ageMax = 17;
+
+        if (randomBool) {
+            age = floorRandom(ageMax - ageMin + 1) + ageMin; 
+        } else {
+            // Edad manual
+            age = input("age", false, `Child`, ageMin, ageMax);
+            if (age === null) throw new Error("Passenger creation cancelled by user.");
+        }
+        
         super(name, surname, groupID, age, 125); 
         this.type = "Child";
     }
@@ -89,7 +171,16 @@ class Group {
         this.childAmount = childAmount;
         this.amount = adultAmount + childAmount;
         
-        this.passengers = this.createPassengers(this.id, adultAmount, childAmount, randomBool);
+        try {
+            this.passengers = this.createPassengers(this.id, adultAmount, childAmount, randomBool);
+        } catch (error) {
+            // Maneja la cancelación del usuario. Retrocede el ID.
+            nextGroupID--;
+            console.error("Group creation aborted:", error.message);
+            this.passengers = null;
+            this.id = -1; // Marca el grupo como inválido
+            return;
+        }
         
         this.price = this.calculateGroupPrice(this.passengers);
     }
@@ -98,72 +189,169 @@ class Group {
         let passengers = [];
 
         for (let i = 0; i < adultAmount; i++) {
+            const promptMsg = `Adult ${i + 1} of ${adultAmount} (Group ${groupID})`;
+            const name = input("name", randomBool, promptMsg);
+            if (name === null) throw new Error("Name input cancelled.");
+            const surname = input("surname", randomBool, promptMsg);
+            if (surname === null) throw new Error("Surname input cancelled.");
+            
             passengers.push(
-                new Adult(
-                    input("name", randomBool),
-                    input("surname", randomBool),
-                    groupID
-                )
+                new Adult(name, surname, groupID, randomBool)
             );
         }
 
         for (let i = 0; i < childAmount; i++) {
+            const promptMsg = `Child ${i + 1} of ${childAmount} (Group ${groupID})`;
+            const name = input("name", randomBool, promptMsg);
+            if (name === null) throw new Error("Name input cancelled.");
+            const surname = input("surname", randomBool, promptMsg);
+            if (surname === null) throw new Error("Surname input cancelled.");
+            
             passengers.push(
-                new Child(
-                    input("name", randomBool),
-                    input("surname", randomBool),
-                    groupID
-                )
+                new Child(name, surname, groupID, randomBool)
             );
         }
         return passengers;
     }
 
     calculateGroupPrice(passengers) {
+        if (!passengers) return 0;
         return passengers.reduce((total, passenger) => total + passenger.price, 0);
     }
 
-    showInfo() {
-        console.log(`Group ${this.id}`);
-        console.log(`Adults: ${this.adultAmount}${this.childAmount != 0 ? ", Children:" : ""} ${this.childAmount != 0 ? this.childAmount : ""}`);
-        console.log(`${this.amount} passengers total`);
-        console.log(`TOTAL PRICE: $${this.price}`);
+    groupInfo(groupContainer) {
+        if (this.id === -1) return; // No mostrar grupos cancelados
         
-        for (let passenger of this.passengers) {
-            console.log(`- ${passenger.name} ${passenger.surname}, Age:${passenger.age}, Price: $${passenger.price}`);
-        }
+        const totalPassengers = this.amount;
+        const totalPrice = this.price;
+
+        const groupNumber = createElement("h3", `Group ${this.id}`);
+        const groupTotalPassengers = createElement("h4", `${totalPassengers} passengers total`);
+        const groupTotalPrice = createElement("h4", `$${totalPrice}`, "price");
+        const groupComposition = createElement("p", `Adults: ${this.adultAmount}, Children: ${this.childAmount}`); 
+        const groupInfo = createElement("div", null, "group-info");
+
+        groupInfo.append(groupNumber, groupTotalPassengers, groupComposition, groupTotalPrice);
+        groupContainer.appendChild(groupInfo);
+    }
+
+    displayPassengers(groupContainer) {
+        if (this.id === -1) return; // No mostrar grupos cancelados
+        
+        const passengersInfo = createElement("div", null, "passengers-info");
+        this.passengers.map(passenger => passenger.info(passengersInfo));
+        groupContainer.appendChild(passengersInfo);
     }
 }
 
 function generateRandomGroupComposition(maxSize) {
-    let adultAmount = skewedLowerRandom(maxSize);
-    
-    let maxChildren = Math.max(0, maxSize - adultAmount); 
-    let childAmount = skewedLowerRandom(maxChildren);
-    
-    const total = adultAmount + childAmount;
-    if (total > maxSize) {
-        childAmount -= (total - maxSize); 
-    }
+    let totalSize = skewedLowerRandom(maxSize); 
 
+    totalSize = Math.max(1, totalSize); 
+    let adultAmount = floorRandom(totalSize) + 1;
+    let childAmount = totalSize - adultAmount;
     return {
-        adultAmount: Math.max(1, adultAmount), 
-        childAmount: Math.max(0, childAmount)
+        adultAmount: adultAmount, 
+        childAmount: childAmount
     };
 }
 
-
-function createMultipleGroups(groupsAmount, maxGroupSize) {
-    let groups = [];
-    for (let i = 0; i < groupsAmount; i++) {
-        let composition = generateRandomGroupComposition(maxGroupSize);
-        
-        let group = new Group(composition.adultAmount, composition.childAmount);
-        
-        groups.push(group);
-        group.showInfo();
-        console.log("-------------------");
-    }
+function createStructuredGroup() {
+    const composition = generateRandomGroupComposition(maxGroupSize);
+    return new Group(composition.adultAmount, composition.childAmount);
 }
 
-createMultipleGroups(5, maxGroupSize);
+function createMultipleGroups(groupsAmount) {
+    const groups = [];
+    for (let i = 0; i < groupsAmount; i++) {
+        groups.push(createStructuredGroup());
+    }
+    return groups;
+}
+
+// --- LÓGICA DE INTERFAZ Y EVENTOS ---
+
+let groups = [];
+const groupContainers = document.querySelectorAll(".group-container");
+const groupsButton = document.getElementById("groupsButton");
+const addRandomButton = document.getElementById("addRandomButton");
+const addButton = document.getElementById("addButton");
+const locationButton = document.getElementById("locationButton");
+
+function displayAllGroups(groupsToDisplay) {
+    groupContainers.forEach((group) => group.remove());
+
+    let mainContainer = document.querySelector("main");
+    if (!mainContainer) {
+        mainContainer = createElement("main");
+        document.body.appendChild(mainContainer);
+    } else {
+        mainContainer.innerHTML = "";
+    }
+
+    groupsToDisplay.filter(g => g.id !== -1).forEach((group) => { // Filtra grupos cancelados
+        const groupContainer = createElement("section", null, "group-container");
+        group.groupInfo(groupContainer);
+        group.displayPassengers(groupContainer);
+        mainContainer.appendChild(groupContainer);
+    });
+}
+
+groupsButton.addEventListener("click", function() {
+    nextPassengerID = 0;
+    nextGroupID = 0;
+
+    let groupsAmount = parseInt(document.getElementById("groupInput").value) || 1;
+    
+    groups = createMultipleGroups(groupsAmount);
+    displayAllGroups(groups);
+
+    const firstGroup = document.querySelector(".group-container:first-child");
+    if (firstGroup) {
+        firstGroup.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+
+addRandomButton.addEventListener("click", function() {
+    let amountToAdd = parseInt(document.getElementById("addInput").value) || 1;
+    
+    for (let i = 0; i < amountToAdd ; i++) {
+        const newGroup = createStructuredGroup();
+        groups.push(newGroup);
+    }
+    displayAllGroups(groups);
+
+    const lastGroup = document.querySelector(".group-container:last-child");
+    if (lastGroup) {
+        lastGroup.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+
+// NUEVA FUNCIÓN MEJORADA: Grupo Personalizado
+addButton.addEventListener("click", function() {
+    const adultAmount = parseInt(prompt("Enter number of adults in the group (min 1):"));
+    const childAmount = parseInt(prompt("Enter number of children in the group (min 0):"));
+    const newCustomGroup = new Group(adultAmount, childAmount, false);
+    
+    // Solo agrega y muestra si el grupo no fue cancelado por el usuario
+    if (newCustomGroup.id !== -1) {
+        groups.push(newCustomGroup);
+        displayAllGroups(groups);
+
+        const lastGroup = document.querySelector(".group-container:last-child");
+        if (lastGroup) {
+            lastGroup.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+});
+
+locationButton.addEventListener("click", function() {
+    const randomLocation = floorRandom(locations.length);
+    const locationElement = document.getElementById("location");
+    locationElement.textContent = `Destination: ${locations[randomLocation]}`;
+
+    const viewScroll = document.querySelector("#location");
+    if (viewScroll) {
+        viewScroll.scrollIntoView({ behavior: 'smooth' });
+    }
+});
