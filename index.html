@@ -9,9 +9,16 @@
 <body>
     <nav>
         <img class="Logo" src="Logo.svg" />
-        <button id="groupsButton">Randomize groups <input type="number" id="groupInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*"></button>
-        <button id="addButton">Add groups <input type="number" id="addInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*"></button>
+        <div class="button-group">
+            <button id="groupsButton">Randomize groups</button>
+            <input type="number" id="groupInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <div class="button-group">
+            <button id="addRandomButton">Add random groups</button>
+            <input type="number" id="addInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*">
+        </div>
         <button id="locationButton">Randomize location</button>
+        <button id="addButton">Add group</button>
     </nav>
     <h2>Viaje <b id="location">Rio de Janeiro</b></h2>
 </body>

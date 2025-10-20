@@ -28,6 +28,10 @@ nav {
     padding: 1rem 0;
 }
 
+.button-group {
+    display: flex;
+}
+
 button {
     background-color: var(--primary-color);
     border: 1px dashed #000;
@@ -39,8 +43,18 @@ button {
     transition: background-color 0.2s, color 0.2s, border 0.2s;
 }
 
+.button-group button {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-right: none;
+}
+
 button:hover {
     border: 1px solid #000;
+}
+
+.button-group button:hover {
+    border-right: none;
 }
 
 button:focus {
@@ -52,8 +66,8 @@ button:focus {
 input {
     text-align: center;
     width:1.75rem;
-    border: 1px solid black;
-    border-radius: 0.25rem;
+    border: 1px dashed black;
+    border-radius: 0 99rem 99rem 0;
     background-color: var(--primary-color);
     color:black;
 }
@@ -117,7 +131,6 @@ h4 {
 .passengers-info {
     display: grid;
     flex-grow:1;
-    grid-template-columns:;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap:1rem;
 }

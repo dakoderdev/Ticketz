@@ -167,7 +167,7 @@ document.getElementById("groupsButton").addEventListener("click", function() {
   }
 });
 
-document.getElementById("addButton").addEventListener("click", function() {
+document.getElementById("addRandomButton").addEventListener("click", function() {
   let input = document.getElementById("addInput").value;
   for (let i = 0; i < input ; i++) {
     const newGroup = createGroup(Math.floor(Math.random() * 12) + 1);
