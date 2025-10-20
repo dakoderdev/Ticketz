@@ -22,8 +22,8 @@ let locations = [
     "São Paulo", "Madrid", "Rome", "Bangkok", "Istanbul"
 ];
 
-let nextGroupID = 0;
-let nextPassengerID = 0;
+let nextGroupID = 1;
+let nextPassengerID = 1;
 const maxGroupSize = 12;
 
 function nextID(type) {
@@ -49,7 +49,6 @@ function createElement(tag, text, className) {
     return el;
 }
 
-// --- FUNCIÓN DE ENTRADA MEJORADA Y ROBUSTA ---
 function input(field, randomBool, promptMessage = "passenger", ageMin, ageMax) {
     let result;
 
@@ -92,7 +91,6 @@ function input(field, randomBool, promptMessage = "passenger", ageMin, ageMax) {
             if (result !== null && result.trim() !== "") {
                 isValid = true;
             } else if (result === null) {
-                // Si el usuario presiona Cancelar, salimos
                 return null;
             } else {
                 alert(`Input cannot be empty for ${promptMessage}'s ${field}.`);
@@ -164,21 +162,108 @@ class Child extends Passenger {
     }
 }
 
+const passengerDialog = document.getElementById("passengerDialog");
+
+async function collectPassengersManually(groupID, adultAmount, childAmount) {
+    const dialog = passengerDialog;
+    const titleEl = dialog.querySelector("h3");
+    const nameInputEl = dialog.querySelector("#nameInput");
+    const surnameInputEl = dialog.querySelector("#surnameInput");
+    const ageInputEl = dialog.querySelector("#ageInput");
+    const submitBtn = dialog.querySelector("#passengerSubmitButton");
+    const cancelBtn = dialog.querySelector("#passengerCancelButton");
+
+    function askOne(promptMsg, ageMin, ageMax) {
+        return new Promise((resolve) => {
+            titleEl.textContent = promptMsg;
+            nameInputEl.value = "";
+            surnameInputEl.value = "";
+            ageInputEl.value = "";
+            ageInputEl.min = ageMin;
+            ageInputEl.max = ageMax;
+
+            dialog.showModal();
+
+            function cleanup() {
+                submitBtn.removeEventListener("click", onSubmit);
+                cancelBtn.removeEventListener("click", onCancel);
+                try { dialog.close(); } catch (e) {}
+            }
+
+            function onSubmit(ev) {
+                // prevent the dialog/form from automatically closing and allow validation
+                ev.preventDefault();
+                const name = nameInputEl.value.trim();
+                const surname = surnameInputEl.value.trim();
+                const age = parseInt(ageInputEl.value, 10);
+
+                if (!name) { alert("Name cannot be empty."); return; }
+                if (!surname) { alert("Surname cannot be empty."); return; }
+                if (isNaN(age) || age < ageMin || age > ageMax) {
+                    alert(`Age must be a number between ${ageMin} and ${ageMax}.`);
+                    return;
+                }
+
+                cleanup();
+                resolve({ name, surname, age });
+            }
+
+            function onCancel() {
+                cleanup();
+                resolve(null);
+            }
+
+            submitBtn.addEventListener("click", onSubmit);
+            cancelBtn.addEventListener("click", onCancel);
+        });
+    }
+
+    const passengers = [];
+
+    // Adults
+    for (let i = 0; i < adultAmount; i++) {
+        const promptMsg = `Add Adult ${i + 1} of ${adultAmount} (Group ${groupID})`;
+        const result = await askOne(promptMsg, 18, 120);
+        if (result === null) throw new Error("Passenger creation cancelled.");
+        const p = new Passenger(result.name, result.surname, groupID, result.age, 200);
+        p.type = "Adult";
+        passengers.push(p);
+    }
+
+    // Children
+    for (let i = 0; i < childAmount; i++) {
+        const promptMsg = `Add Child ${i + 1} of ${childAmount} (Group ${groupID})`;
+        const result = await askOne(promptMsg, 5, 17);
+        if (result === null) throw new Error("Passenger creation cancelled.");
+        const p = new Passenger(result.name, result.surname, groupID, result.age, 125);
+        p.type = "Child";
+        passengers.push(p);
+    }
+
+    return passengers;
+}
+
 class Group {
-    constructor(adultAmount, childAmount, randomBool = true) {
-        this.id = nextID("group");
+    // accept optional passengers array and optional predefinedID
+    constructor(adultAmount, childAmount, randomBool = true, passengers = null, predefinedID = null) {
+        this.id = predefinedID !== null ? predefinedID : nextID("group");
         this.adultAmount = adultAmount;
         this.childAmount = childAmount;
         this.amount = adultAmount + childAmount;
         
         try {
-            this.passengers = this.createPassengers(this.id, adultAmount, childAmount, randomBool);
+            if (passengers && Array.isArray(passengers)) {
+                this.passengers = passengers;
+            } else {
+                // synchronous generation for random groups and legacy manual flow (uses prompt)
+                this.passengers = this.createPassengers(this.id, adultAmount, childAmount, randomBool);
+            }
         } catch (error) {
-            // Maneja la cancelación del usuario. Retrocede el ID.
-            nextGroupID--;
+            // only roll back id if it was reserved inside this constructor
+            if (predefinedID === null) nextGroupID--;
             console.error("Group creation aborted:", error.message);
             this.passengers = null;
-            this.id = -1; // Marca el grupo como inválido
+            this.id = -1;
             return;
         }
         
@@ -275,8 +360,6 @@ let groups = [];
 const groupContainers = document.querySelectorAll(".group-container");
 const groupsButton = document.getElementById("groupsButton");
 const addRandomButton = document.getElementById("addRandomButton");
-const addButton = document.getElementById("addButton");
-const locationButton = document.getElementById("locationButton");
 
 function displayAllGroups(groupsToDisplay) {
     groupContainers.forEach((group) => group.remove());
@@ -298,8 +381,8 @@ function displayAllGroups(groupsToDisplay) {
 }
 
 groupsButton.addEventListener("click", function() {
-    nextPassengerID = 0;
-    nextGroupID = 0;
+    nextPassengerID = 1;
+    nextGroupID = 1;
 
     let groupsAmount = parseInt(document.getElementById("groupInput").value) || 1;
     
@@ -327,28 +410,59 @@ addRandomButton.addEventListener("click", function() {
     }
 });
 
-// NUEVA FUNCIÓN MEJORADA: Grupo Personalizado
-addButton.addEventListener("click", function() {
-    const adultAmount = parseInt(prompt("Enter number of adults in the group (min 1):"));
-    const childAmount = parseInt(prompt("Enter number of children in the group (min 0):"));
-    const newCustomGroup = new Group(adultAmount, childAmount, false);
-    
-    // Solo agrega y muestra si el grupo no fue cancelado por el usuario
-    if (newCustomGroup.id !== -1) {
-        groups.push(newCustomGroup);
-        displayAllGroups(groups);
+const addButton = document.getElementById("addButton");
+const addDialog = document.getElementById("addDialog");
+const adultCountInput = document.getElementById("adultCountInput");
+const childCountInput = document.getElementById("childCountInput");
+const addCancelButton = document.getElementById("addCancelButton");
+const addSubmitButton = document.getElementById("addSubmitButton");
 
-        const lastGroup = document.querySelector(".group-container:last-child");
-        if (lastGroup) {
-            lastGroup.scrollIntoView({ behavior: 'smooth' });
+addButton.addEventListener("click", function() {
+    addDialog.showModal();
+});
+
+// Replaced: use async collection via passenger dialog, reserve id up front
+addSubmitButton.addEventListener("click", async function(event) {
+    event.preventDefault();
+    const adultAmount = parseInt(adultCountInput.value) || 1;
+    const childAmount = parseInt(childCountInput.value) || 0;
+
+    // Reserve a group ID so passenger objects reference correct group id
+    const reservedGroupID = nextID("group");
+
+    try {
+        const passengers = await collectPassengersManually(reservedGroupID, adultAmount, childAmount);
+
+        const newCustomGroup = new Group(adultAmount, childAmount, false, passengers, reservedGroupID);
+
+        if (newCustomGroup.id !== -1) {
+            groups.push(newCustomGroup);
+            displayAllGroups(groups);
+
+            const lastGroup = document.querySelector(".group-container:last-child");
+            if (lastGroup) {
+                lastGroup.scrollIntoView({ behavior: 'smooth' });
+            }
         }
+    } catch (err) {
+        // roll back reserved ID
+        nextGroupID--;
+        console.warn("Group creation cancelled or failed:", err.message || err);
+    } finally {
+        addDialog.close();
     }
 });
+
+addCancelButton.addEventListener("click", function() {
+    addDialog.close();
+});
+
+const locationButton = document.getElementById("locationButton");
 
 locationButton.addEventListener("click", function() {
     const randomLocation = floorRandom(locations.length);
     const locationElement = document.getElementById("location");
-    locationElement.textContent = `Destination: ${locations[randomLocation]}`;
+    locationElement.textContent = locations[randomLocation];
 
     const viewScroll = document.querySelector("#location");
     if (viewScroll) {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">    <title>Ticketz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">    <title>Ticketz</title>
 </head>
 <body>
     <nav>
@@ -43,7 +43,44 @@
         </section>
         -->
     </main>
-    <dialog>Heyy</dialog>
+    <dialog id="addDialog">
+        <form method="dialog" class="dialog-content">
+            <h3>Add New Group</h3>
+            <div class="dialog-field">
+                <label for="adultCountInput">Number of Adults:</label>
+                <input type="number" id="adultCountInput" class="dialog-input" min="1" value="1" required>
+            </div>
+            <div class="dialog-field">
+                <label for="childCountInput">Number of Children:</label>
+                <input type="number" id="childCountInput" class="dialog-input" min="0" value="0" required>
+            </div>
+            <div class="dialog-buttons">
+                <button type="submit" id="addSubmitButton" class="primary-action">Add Group</button>
+                <button type="button" id="addCancelButton">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="passengerDialog">
+        <form method="dialog" class="dialog-content">
+            <h3>Add Passenger 00</h3>
+            <div class="dialog-field">
+                <label for="nameInput">Name:</label>
+                <input type="text" id="nameInput" class="dialog-input" placeholder="eg: John" required>
+            </div>
+            <div class="dialog-field">
+                <label for="surnameInput">Last name:</label>
+                <input type="text" id="surnameInput" class="dialog-input" placeholder="eg: Doe" required>
+            </div>
+            <div class="dialog-field">
+                <label for="ageInput">Age:</label>
+                <input type="number" id="ageInput" class="dialog-input" required>
+            </div>
+            <div class="dialog-buttons">
+                <button type="submit" id="passengerSubmitButton" class="primary-action">Add Group</button>
+                <button type="button" id="passengerCancelButton">Cancel</button>
+            </div>
+        </form>
+    </dialog>
 </body>
 </html>
 <script src="ticketNew.js"></script>

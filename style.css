@@ -4,19 +4,22 @@
     padding: 0;
     scroll-behavior: smooth;
     scroll-padding: 5.292rem;
+    font-family: 'Inter', sans-serif;
 }
 
 :root {
     --primary-color: #FFF9B7;
+    --dark-color: #000;
 }
 
 body {
     display:grid;
     background-color: var(--primary-color);
-    font-family: "Inter", sans-serif;
     padding:1rem;
     padding-top:0;
 }
+
+
 
 nav {
     position: fixed;
@@ -24,8 +27,9 @@ nav {
     display:flex;
     gap:1rem;
     width: calc(100% - 2rem);
-    border-bottom: 1px dashed #000;
+    border-bottom: 1px dashed var(--dark-color);
     padding: 1rem 0;
+    z-index: 10; 
 }
 
 .button-group {
@@ -34,13 +38,17 @@ nav {
 
 button {
     background-color: var(--primary-color);
-    border: 1px dashed #000;
-    color: black;
+    border: 1px dashed var(--dark-color);
+    color: var(--dark-color);
     padding: 0.35rem 0.75rem;
     border-radius: 99rem;
     width: fit-content;
-    font-weight: bold;
+    cursor: pointer; 
     transition: background-color 0.2s, color 0.2s, border 0.2s;
+}
+
+button:hover {
+    border: 1px solid var(--dark-color);
 }
 
 .button-group button {
@@ -49,28 +57,29 @@ button {
     border-right: none;
 }
 
-button:hover {
-    border: 1px solid #000;
-}
-
 .button-group button:hover {
     border-right: none;
 }
 
 button:focus {
-    background-color: #000;
-    border: 1px solid #000;
+    background-color: var(--dark-color);
+    border: 1px solid var(--dark-color);
     color: var(--primary-color);
+    outline: none; 
 }
 
 input {
+    
     text-align: center;
     width:1.75rem;
-    border: 1px dashed black;
+    border: 1px dashed var(--dark-color);
     border-radius: 0 99rem 99rem 0;
     background-color: var(--primary-color);
-    color:black;
+    color:var(--dark-color);
+    padding: 0; 
 }
+
+
 
 .group-container {
     display:flex;
@@ -80,7 +89,7 @@ input {
     background-color: var(--primary-color);
     padding: 1rem;
     border-radius: 2.35rem;
-    border: 1px solid #000;
+    border: 1px solid var(--dark-color);
     margin:1rem 0;
 }
 
@@ -93,7 +102,7 @@ input {
 .group-info {
     display:flex;
     flex-direction: column;
-    background-color: #000;
+    background-color: var(--dark-color);
     color: var(--primary-color);
     padding: 1rem;
     border-radius: 1.35rem;
@@ -117,7 +126,7 @@ h2 {
 
 h3 {
     background-color: var(--primary-color);
-    color: black;
+    color: var(--dark-color);
     padding: 0.35rem 0.75rem;
     margin:0;
     border-radius: 0.35rem;
@@ -139,7 +148,7 @@ h4 {
     width: 100%;
     height: 1px;
     margin: 2rem 0;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid var(--dark-color);
 }
 
 .passenger-info {
@@ -147,7 +156,7 @@ h4 {
 }
 
 .passenger-number {
-    background-color: #000;
+    background-color: var(--dark-color);
     color: var(--primary-color);
     border-radius: 99rem;
     padding: 0.5rem 1rem;
@@ -167,14 +176,190 @@ h4 {
     margin:0;
 }
 
-/* Chrome, Safari, Edge, Opera */
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Firefox */
+
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+
+
+#addDialog {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed; 
+    background-color: var(--primary-color);
+    border:1px solid black;
+    border-radius: 1.5rem; 
+    padding: 2rem;
+    width:90%;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0); 
+    max-width: 30rem;
+    min-width: 300px;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(6px);
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#addDialog h3 {
+    text-align: center;
+    padding:0;
+    margin:0;
+    border-radius:0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.dialog-field {
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dialog-field label {
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+#addDialog input.dialog-input {
+    
+    width: 4rem; 
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    border-radius: 0.5rem; 
+    border: 1px solid var(--dark-color);
+    background-color: var(--primary-color);
+}
+
+.dialog-buttons {
+    
+    display: flex;
+    justify-content: flex-end; 
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#addDialog button {
+    border-radius: 99rem;
+    padding: 0.5rem 1rem;
+}
+
+#addDialog button.primary-action {
+    
+    background-color: var(--dark-color);
+    color: var(--primary-color);
+    border: 1px solid var(--dark-color);
+}
+
+#addDialog button:hover {
+    opacity: 0.8;
+}
+
+#cancelButton {
+    
+    background-color: transparent;
+    border: 1px dashed var(--dark-color);
+    color: var(--dark-color);
+}
+
+#passengerDialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--primary-color);
+    border: 1px solid var(--dark-color);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 30rem;
+    min-width: 300px;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0);
+    z-index: 20;
+}
+
+#passengerDialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+}
+
+#passengerDialog h3 {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+#passengerDialog .dialog-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+#passengerDialog label {
+    font-weight: 600;
+    flex-grow: 1;
+    color: var(--dark-color);
+}
+
+#passengerDialog input.dialog-input {
+    width: 100%;
+    max-width: 10rem;
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    border: 1px solid var(--dark-color);
+    background-color: var(--primary-color);
+    color: var(--dark-color);
+}
+
+#passengerDialog .dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#passengerDialog button {
+    border-radius: 99rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+}
+
+#passengerDialog button.primary-action {
+    background-color: var(--dark-color);
+    color: var(--primary-color);
+    border: 1px solid var(--dark-color);
+}
+
+#passengerDialog button:hover {
+    opacity: 0.8;
+}
+
+#passengerCancelButton {
+    background-color: transparent;
+    border: 1px dashed var(--dark-color);
+    color: var(--dark-color);
 }
