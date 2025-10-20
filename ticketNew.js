@@ -125,7 +125,7 @@ class Group {
 
     showInfo() {
         console.log(`Group ${this.id}`);
-        console.log(`Adults: ${this.adultAmount}, Children: ${this.childAmount}`);
+        console.log(`Adults: ${this.adultAmount}${this.childAmount != 0 ? ", Children:" : ""} ${this.childAmount != 0 ? this.childAmount : ""}`);
         console.log(`${this.amount} passengers total`);
         console.log(`TOTAL PRICE: $${this.price}`);
         
