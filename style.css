@@ -8,358 +8,41 @@
 }
 
 :root {
-    --primary-color: #FFF9B7;
-    --dark-color: #000;
+    --dark-border-20: rgb(34, 34, 34, 0.2);
+    --dark-border-8: rgb(34, 34, 34, 0.08);
+    --green: #CCFFBD;
 }
-
-body {
-    display:grid;
-    background-color: var(--primary-color);
-    padding:1rem;
-    padding-top:0;
-}
-
-
 
 nav {
-    position: fixed;
-    background-color: var(--primary-color);
-    display:flex;
-    gap:1rem;
-    width: calc(100% - 2rem);
-    border-bottom: 1px dashed var(--dark-color);
-    padding: 1rem 0;
-    z-index: 10; 
-}
-
-.button-group {
+    position:fixed;
     display: flex;
-}
-
-button {
-    background-color: var(--primary-color);
-    border: 1px dashed var(--dark-color);
-    color: var(--dark-color);
-    padding: 0.35rem 0.75rem;
-    border-radius: 99rem;
-    width: fit-content;
-    cursor: pointer; 
-    transition: background-color 0.2s, color 0.2s, border 0.2s;
-}
-
-button:hover {
-    border: 1px solid var(--dark-color);
-}
-
-.button-group button {
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-right: none;
-}
-
-.button-group button:hover {
-    border-right: none;
-}
-
-button:focus {
-    background-color: var(--dark-color);
-    border: 1px solid var(--dark-color);
-    color: var(--primary-color);
-    outline: none; 
-}
-
-input {
-    
-    text-align: center;
-    width:1.75rem;
-    border: 1px dashed var(--dark-color);
-    border-radius: 0 99rem 99rem 0;
-    background-color: var(--primary-color);
-    color:var(--dark-color);
-    padding: 0; 
-}
-
-
-
-.group-container {
-    display:flex;
-    flex-direction: row;
-    gap:1rem;
-    width:100%;
-    background-color: var(--primary-color);
-    padding: 1rem;
-    border-radius: 2.35rem;
-    border: 1px solid var(--dark-color);
-    margin:1rem 0;
-}
-
-@media (max-width: 950px) {
-    .group-container {
-        flex-direction: column;
-    }
-}
-
-.group-info {
-    display:flex;
-    flex-direction: column;
-    background-color: var(--dark-color);
-    color: var(--primary-color);
-    padding: 1rem;
-    border-radius: 1.35rem;
-    margin-bottom: 1rem;
-    width: fit-content;
-    height: fit-content;
-}
-
-@media (max-width: 950px) {
-    .group-info {
-        width:100%;
-    }
-}
-
-h2 {
-    padding-top: 5.292rem;
-    text-align: center;
-    font-size: 4rem;
-    font-weight:400;
-}
-
-h3 {
-    background-color: var(--primary-color);
-    color: var(--dark-color);
-    padding: 0.35rem 0.75rem;
-    margin:0;
-    border-radius: 0.35rem;
-    width: fit-content;
-}
-
-h4 {
-    margin:0.25rem 0;
-}
-
-.passengers-info {
-    display: grid;
-    flex-grow:1;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap:1rem;
-}
-
-.horizontal-line {
-    width: 100%;
-    height: 1px;
-    margin: 2rem 0;
-    border-bottom: 1px solid var(--dark-color);
-}
-
-.passenger-info {
-    padding-bottom:1rem;
-}
-
-.passenger-number {
-    background-color: var(--dark-color);
-    color: var(--primary-color);
-    border-radius: 99rem;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    margin-bottom:0.35rem;
-}
-
-.passenger-name {
-    font-size:1.35rem;
-    font-weight:bold;
-}
-
-.price {
-    flex-grow:1;
-    font-size:3rem;
-    text-align:end;
-    margin:0;
-}
-
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-
-
-#addDialog {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    position: fixed; 
-    background-color: var(--primary-color);
-    border:1px solid black;
-    border-radius: 1.5rem; 
-    padding: 2rem;
-    width:90%;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0); 
-    max-width: 30rem;
-    min-width: 300px;
-}
-
-dialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.4); 
-    backdrop-filter: blur(6px);
-}
-
-.dialog-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-#addDialog h3 {
-    text-align: center;
-    padding:0;
-    margin:0;
-    border-radius:0;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.dialog-field {
-    
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-}
-
-.dialog-field label {
-    font-weight: 600;
-    flex-grow: 1;
-}
-
-#addDialog input.dialog-input {
-    
-    width: 4rem; 
-    padding: 0.5rem 0.25rem;
-    text-align: center;
-    border-radius: 0.5rem; 
-    border: 1px solid var(--dark-color);
-    background-color: var(--primary-color);
-}
-
-.dialog-buttons {
-    
-    display: flex;
-    justify-content: flex-end; 
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-#addDialog button {
+    bottom: 0.625rem;
+    border: 1px solid var(--dark-border-8);
     border-radius: 99rem;
-    padding: 0.5rem 1rem;
-}
-
-#addDialog button.primary-action {
-    
-    background-color: var(--dark-color);
-    color: var(--primary-color);
-    border: 1px solid var(--dark-color);
-}
-
-#addDialog button:hover {
-    opacity: 0.8;
-}
-
-#cancelButton {
-    
-    background-color: transparent;
-    border: 1px dashed var(--dark-color);
-    color: var(--dark-color);
-}
-
-#passengerDialog {
-    position: fixed;
+    gap: 1rem;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--primary-color);
-    border: 1px solid var(--dark-color);
-    border-radius: 1.5rem;
-    padding: 2rem;
-    width: 90%;
-    max-width: 30rem;
-    min-width: 300px;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0);
-    z-index: 20;
+    transform: translateX(-50%);
+    padding:0.5rem;
+    padding-left: 0;
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.16);
 }
 
-#passengerDialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(6px);
+nav img {
+    height:1rem;
+    padding: 0 1.125rem;
+    border-right: 1px solid var(--dark-border-20); 
 }
 
-#passengerDialog h3 {
-    text-align: center;
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--dark-color);
-}
-
-#passengerDialog .dialog-field {
+nav div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
-#passengerDialog label {
-    font-weight: 600;
-    flex-grow: 1;
-    color: var(--dark-color);
-}
-
-#passengerDialog input.dialog-input {
-    width: 100%;
-    max-width: 10rem;
-    padding: 0.5rem 0.25rem;
-    text-align: center;
-    border-radius: 0.5rem;
-    border: 1px solid var(--dark-color);
-    background-color: var(--primary-color);
-    color: var(--dark-color);
-}
-
-#passengerDialog .dialog-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-#passengerDialog button {
+nav div button {
+    font-size: 0.75rem;
+    padding: 0.5rem 1.125rem;
+    border:none;
     border-radius: 99rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: opacity 0.2s ease-in-out;
-}
-
-#passengerDialog button.primary-action {
-    background-color: var(--dark-color);
-    color: var(--primary-color);
-    border: 1px solid var(--dark-color);
-}
-
-#passengerDialog button:hover {
-    opacity: 0.8;
-}
-
-#passengerCancelButton {
-    background-color: transparent;
-    border: 1px dashed var(--dark-color);
-    color: var(--dark-color);
+    background-color: var(--green);
 }
