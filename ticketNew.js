@@ -49,56 +49,17 @@ function createElement(tag, text, className) {
     return el;
 }
 
-function input(field, randomBool, promptMessage = "passenger", ageMin, ageMax) {
-    let result;
-
-    if (randomBool) {
-        // Generación aleatoria para grupos NO personalizados
-        switch (field) {
-            case "name":
-                return people.name[floorRandom(people.name.length)];
-            case "surname":
-                return people.surname[floorRandom(people.surname.length)];
-            // La edad aleatoria ahora se genera en las clases Adult/Child
-        }
-    } else {
-        // Entrada manual para grupos personalizados
-        let isValid = false;
-        
-        while (!isValid) {
-            switch (field) {
-                case "name":
-                    result = prompt(`Enter name for ${promptMessage}:`);
-                    break;
-                case "surname":
-                    result = prompt(`Enter surname for ${promptMessage}:`);
-                    break;
-                case "age":
-                    // Validación especial para la edad
-                    let ageInput = prompt(`Enter age for ${promptMessage} (Min: ${ageMin}, Max: ${ageMax}):`);
-                    let parsedAge = parseInt(ageInput);
-                    
-                    if (ageInput === null) return null; // Permite cancelar el prompt
-                    
-                    if (!isNaN(parsedAge) && parsedAge >= ageMin && parsedAge <= ageMax) {
-                        return parsedAge;
-                    }
-                    alert(`Invalid age. Please enter a number between ${ageMin} and ${ageMax}.`);
-                    continue; // Vuelve a intentar la edad
-            }
-
-            // Validación de nombre/apellido (no nulo y no vacío)
-            if (result !== null && result.trim() !== "") {
-                isValid = true;
-            } else if (result === null) {
-                return null;
-            } else {
-                alert(`Input cannot be empty for ${promptMessage}'s ${field}.`);
-            }
-        }
-        return result;
+function createRandomPassenger(groupID, type) {
+    const name = people.name[floorRandom(people.name.length)];
+    const surname = people.surname[floorRandom(people.surname.length)];
+    
+    if (type === "Adult") {
+        return new Adult(name, surname, groupID);
+    } else if (type === "Child") {
+        return new Child(name, surname, groupID);
     }
 }
+
 
 class Passenger {
     constructor(name, surname, groupID, age, price) { 
@@ -125,18 +86,10 @@ class Passenger {
 }
 
 class Adult extends Passenger {
-    constructor(name, surname, groupID, randomBool) {
-        let age;
+    constructor(name, surname, groupID) {
         const ageMin = 18;
-        const ageMax = randomBool ? 65 : 120;
-
-        if (randomBool) {
-            age = floorRandom(ageMax - ageMin + 1) + ageMin;
-        } else {
-            // Edad manual
-            age = input("age", false, `Adult`, ageMin, ageMax);
-            if (age === null) throw new Error("Passenger creation cancelled by user.");
-        }
+        const ageMax = 65;
+        const age = floorRandom(ageMax - ageMin + 1) + ageMin;
         
         super(name, surname, groupID, age, 200); 
         this.type = "Adult";
@@ -144,18 +97,10 @@ class Adult extends Passenger {
 }
 
 class Child extends Passenger {
-    constructor(name, surname, groupID, randomBool) {
-        let age;
+    constructor(name, surname, groupID) {
         const ageMin = 5;
         const ageMax = 17;
-
-        if (randomBool) {
-            age = floorRandom(ageMax - ageMin + 1) + ageMin; 
-        } else {
-            // Edad manual
-            age = input("age", false, `Child`, ageMin, ageMax);
-            if (age === null) throw new Error("Passenger creation cancelled by user.");
-        }
+        const age = floorRandom(ageMax - ageMin + 1) + ageMin; 
         
         super(name, surname, groupID, age, 125); 
         this.type = "Child";
@@ -164,7 +109,7 @@ class Child extends Passenger {
 
 const passengerDialog = document.getElementById("passengerDialog");
 
-async function collectPassengersManually(groupID, adultAmount, childAmount) {
+async function inputManually(groupID, adultAmount, childAmount) {
     const dialog = passengerDialog;
     const titleEl = dialog.querySelector("h3");
     const nameInputEl = dialog.querySelector("#nameInput");
@@ -244,8 +189,7 @@ async function collectPassengersManually(groupID, adultAmount, childAmount) {
 }
 
 class Group {
-    // accept optional passengers array and optional predefinedID
-    constructor(adultAmount, childAmount, randomBool = true, passengers = null, predefinedID = null) {
+    constructor(adultAmount, childAmount, passengers = null, predefinedID = null) {
         this.id = predefinedID !== null ? predefinedID : nextID("group");
         this.adultAmount = adultAmount;
         this.childAmount = childAmount;
@@ -255,11 +199,15 @@ class Group {
             if (passengers && Array.isArray(passengers)) {
                 this.passengers = passengers;
             } else {
-                // synchronous generation for random groups and legacy manual flow (uses prompt)
-                this.passengers = this.createPassengers(this.id, adultAmount, childAmount, randomBool);
+                this.passengers = [];
+                for (let i = 0; i < adultAmount; i++) {
+                    this.passengers.push(createRandomPassenger(this.id, "Adult"));
+                }
+                for (let i = 0; i < childAmount; i++) {
+                    this.passengers.push(createRandomPassenger(this.id, "Child"));
+                }
             }
         } catch (error) {
-            // only roll back id if it was reserved inside this constructor
             if (predefinedID === null) nextGroupID--;
             console.error("Group creation aborted:", error.message);
             this.passengers = null;
@@ -270,43 +218,16 @@ class Group {
         this.price = this.calculateGroupPrice(this.passengers);
     }
 
-    createPassengers(groupID, adultAmount, childAmount, randomBool) {
-        let passengers = [];
-
-        for (let i = 0; i < adultAmount; i++) {
-            const promptMsg = `Adult ${i + 1} of ${adultAmount} (Group ${groupID})`;
-            const name = input("name", randomBool, promptMsg);
-            if (name === null) throw new Error("Name input cancelled.");
-            const surname = input("surname", randomBool, promptMsg);
-            if (surname === null) throw new Error("Surname input cancelled.");
-            
-            passengers.push(
-                new Adult(name, surname, groupID, randomBool)
-            );
-        }
-
-        for (let i = 0; i < childAmount; i++) {
-            const promptMsg = `Child ${i + 1} of ${childAmount} (Group ${groupID})`;
-            const name = input("name", randomBool, promptMsg);
-            if (name === null) throw new Error("Name input cancelled.");
-            const surname = input("surname", randomBool, promptMsg);
-            if (surname === null) throw new Error("Surname input cancelled.");
-            
-            passengers.push(
-                new Child(name, surname, groupID, randomBool)
-            );
-        }
-        return passengers;
-    }
-
+    // Removed createPassengers method
+    
     calculateGroupPrice(passengers) {
         if (!passengers) return 0;
         return passengers.reduce((total, passenger) => total + passenger.price, 0);
     }
-
+    
+    // ... groupInfo and displayPassengers methods remain the same ...
     groupInfo(groupContainer) {
-        if (this.id === -1) return; // No mostrar grupos cancelados
-        
+        if (this.id === -1) return;
         const totalPassengers = this.amount;
         const totalPrice = this.price;
 
@@ -321,13 +242,14 @@ class Group {
     }
 
     displayPassengers(groupContainer) {
-        if (this.id === -1) return; // No mostrar grupos cancelados
-        
+        if (this.id === -1) return;
         const passengersInfo = createElement("div", null, "passengers-info");
         this.passengers.map(passenger => passenger.info(passengersInfo));
         groupContainer.appendChild(passengersInfo);
     }
 }
+
+/* Logica de creacion de grupo fuera de los constructores */
 
 function generateRandomGroupComposition(maxSize) {
     let totalSize = skewedLowerRandom(maxSize); 
@@ -354,7 +276,7 @@ function createMultipleGroups(groupsAmount) {
     return groups;
 }
 
-// --- LÓGICA DE INTERFAZ Y EVENTOS ---
+// --- LÓGICA DE INTERFAZ Y EVENTOS (No changes here, as it was already correct) ---
 
 let groups = [];
 const groupContainers = document.querySelectorAll(".group-container");
@@ -410,6 +332,8 @@ addRandomButton.addEventListener("click", function() {
     }
 });
 
+/* ------- Añadir Grupos Customizados ------- */
+
 const addButton = document.getElementById("addButton");
 const addDialog = document.getElementById("addDialog");
 const adultCountInput = document.getElementById("adultCountInput");
@@ -421,19 +345,18 @@ addButton.addEventListener("click", function() {
     addDialog.showModal();
 });
 
-// Replaced: use async collection via passenger dialog, reserve id up front
 addSubmitButton.addEventListener("click", async function(event) {
     event.preventDefault();
     const adultAmount = parseInt(adultCountInput.value) || 1;
     const childAmount = parseInt(childCountInput.value) || 0;
-
     // Reserve a group ID so passenger objects reference correct group id
     const reservedGroupID = nextID("group");
 
     try {
-        const passengers = await collectPassengersManually(reservedGroupID, adultAmount, childAmount);
+        const passengers = await inputManually(reservedGroupID, adultAmount, childAmount);
 
-        const newCustomGroup = new Group(adultAmount, childAmount, false, passengers, reservedGroupID);
+        // randomBool is explicitly set to false because we have the manual passengers array
+        const newCustomGroup = new Group(adultAmount, childAmount, passengers, reservedGroupID);
 
         if (newCustomGroup.id !== -1) {
             groups.push(newCustomGroup);
