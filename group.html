@@ -9,31 +9,30 @@
 <body>
     <nav>
         <img class="Logo" src="Logo.svg" />
-        <div class="button-group">
-            <button id="groupsButton">Randomize groups</button>
+        <div class="button__group">
+            <button class="button button--with-input" id="groupsButton">Randomize groups</button>
             <input type="number" id="groupInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*">
         </div>
-        <div class="button-group">
-            <button id="addRandomButton">Add random groups</button>
+        <div class="button__group">
+            <button class="button button--with-input" id="addRandomButton">Add random groups</button>
             <input type="number" id="addInput" autocomplete="off" value="1" inputmode="numeric" pattern="[0-9]*">
         </div>
-        <button id="locationButton">Randomize location</button>
-        <button id="addButton">Add group</button>
+        <button class="button" id="addButton">Add group</button>
     </nav>
     <h2>Viaje <b id="location">Rio de Janeiro</b></h2>
     <main>
         <!--
-        <section class="group-container">  
-            <div class="group-info">
+        <section class="group__container">  
+            <div class="group__info">
                 <h3>Group [ID]</h3>
                 <h4>[Total Passengers] passengers total</h4>
                 <p>Adults: [Adult Count], Children: [Child Count]</p>
                 <h4 class="price">$[Total Price]</h4>
             </div>
-            <div class="passengers-info">  
-                <div class="passenger-info">
-                    <h4 class="passenger-number">Passenger [ID]</h4>
-                    <p class="passenger-name">[Name] [Surname]</p>
+            <div class="passengers__info">  
+                <div class="passenger__info">
+                    <h4 class="passenger__number">Passenger [ID]</h4>
+                    <p class="passenger__name">[Name] [Surname]</p>
                     <p>Type: Adult/Child</p>
                     <p>Age: [Age]</p>
                     <p>Price: $[Price]</p>
@@ -43,41 +42,45 @@
         </section>
         -->
     </main>
-    <dialog id="addDialog">
-        <form method="dialog" class="dialog-content">
+    <dialog class="dialog" id="addDialog">
+        <form method="dialog" class="dialog__content">
             <h3>Add New Group</h3>
-            <div class="dialog-field">
-                <label for="adultCountInput">Number of Adults:</label>
-                <input type="number" id="adultCountInput" class="dialog-input" min="1" value="1" required>
+            <div class="dialog__fields">
+             <div class="dialog__field">
+                <label class="dialog__label" for="adultCountInput">Number of Adults</label>
+                <input class="dialog__input" type="number" id="adultCountInput" class="dialog-input" min="1" value="1" required>
             </div>
-            <div class="dialog-field">
-                <label for="childCountInput">Number of Children:</label>
-                <input type="number" id="childCountInput" class="dialog-input" min="0" value="0" required>
+            <div class="dialog__field">
+                <label class="dialog__label" for="childCountInput">Number of Children</label>
+                <input class="dialog__input" type="number" id="childCountInput" class="dialog-input" min="0" value="0" required>
             </div>
-            <div class="dialog-buttons">
-                <button type="submit" id="addSubmitButton" class="primary-action">Add Group</button>
-                <button type="button" id="addCancelButton">Cancel</button>
+           </div>
+            <div class="dialog__buttons">
+                <button class="dialog__button" type="button" id="addCancelButton">Cancel</button>
+                <button class="dialog__button dialog__button--submit" type="submit" id="addSubmitButton" class="primary-action">Add Group</button>
             </div>
         </form>
     </dialog>
-    <dialog id="passengerDialog">
-        <form method="dialog" class="dialog-content">
+    <dialog class="dialog" id="passengerDialog">
+        <form method="dialog" class="dialog__content">
             <h3>Add Passenger 00</h3>
-            <div class="dialog-field">
-                <label for="nameInput">Name:</label>
-                <input type="text" id="nameInput" class="dialog-input" placeholder="eg: John" required>
+            <div class="dialog__fields">
+                <div class="dialog__field">
+                    <label class="dialog__label" for="nameInput">Name</label>
+                    <input class="dialog__input" type="text" id="nameInput" class="dialog-input" required>
+                </div>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="surnameInput">Last name</label>
+                    <input class="dialog__input" type="text" id="surnameInput" class="dialog-input" required>
+                </div>
             </div>
-            <div class="dialog-field">
-                <label for="surnameInput">Last name:</label>
-                <input type="text" id="surnameInput" class="dialog-input" placeholder="eg: Doe" required>
+            <div class="dialog__field">
+                <label class="dialog__label" for="ageInput">Age</label>
+                <input class="dialog__input" type="number" id="ageInput" class="dialog-input" required>
             </div>
-            <div class="dialog-field">
-                <label for="ageInput">Age:</label>
-                <input type="number" id="ageInput" class="dialog-input" required>
-            </div>
-            <div class="dialog-buttons">
-                <button type="submit" id="passengerSubmitButton" class="primary-action">Add Group</button>
-                <button type="button" id="passengerCancelButton">Cancel</button>
+            <div class="dialog__buttons">
+                <button class="dialog__button" type="button" id="passengerCancelButton">Cancel</button>
+                <button class="dialog__button dialog__button--submit" type="submit" id="passengerSubmitButton" class="primary-action">Add Group</button>
             </div>
         </form>
     </dialog>

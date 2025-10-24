@@ -12,16 +12,32 @@
     <nav>
         <img class="Logo" src="Logo.svg" />
         <div>
-            <button>Randomize Trip</button>
-            <button>Add Trip</button>
+            <button id="nav__button--randomize-trip">Randomize Trip</button>
+            <button id="nav__button--add-trip">Add Trip</button>
         </div>
     </nav>
     <main>
-        <span>Trips</span>
-        <section>
-            <article><div></div></article>
-            <article><div></div></article>
+        <span class="main__directory">Trips</span>
+        <section id="trips__grid" class="trips__grid">
         </section>
+        <dialog class="dialog dialog--add-trip">
+            <form method="dialog" class="dialog__content">
+                <h3>Add New Trip</h3>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripLocationInput">Trip Location</label>
+                    <input class="dialog__input" type="text" id="tripLocationInput" class="dialog__input" required>
+                </div>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripCapacityInput">Capacity</label>
+                    <input class="dialog__input" type="number" id="tripCapacityInput" class="dialog__input" value="50" required>
+                </div>
+                <div class="dialog__buttons">
+                    <button type="button" class="dialog__button dialog__button--cancel">Cancel</button>
+                    <button type="submit" class="dialog__button dialog__button--submit">Add Trip</button>
+                </div>
+            </form>
+        </dialog>
     </main>
-</body>
+    <script src="index.js"></script>
+</body> 
 </html>

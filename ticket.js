@@ -14,14 +14,6 @@ let people = {
     ]
 };
 
-let locations = [
-    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix",
-    "Rio de Janeiro", "Buenos Aires", "London", "Paris", "Tokyo",
-    "Sydney", "Cape Town", "Berlin", "Moscow", "Toronto",
-    "Dubai", "Mumbai", "Beijing", "Seoul", "Mexico City",
-    "São Paulo", "Madrid", "Rome", "Bangkok", "Istanbul"
-];
-
 let nextGroupID = 1;
 let nextPassengerID = 1;
 const maxGroupSize = 12;
@@ -72,11 +64,11 @@ class Passenger {
     }
 
     info(passengersInfo) {
-        const passengerInfo = createElement("div", null, "passenger-info");
-        const passengerNumber = createElement("h4", `Passenger ${this.id}`, "passenger-number");
-        const passengerFullName = createElement("p", `${this.name} ${this.surname}`, "passenger-name");
+        const passengerInfo = createElement("div", null, "passenger__info");
+        const passengerNumber = createElement("h4", `Passenger ${this.id}`, "passenger__number");
+        const passengerFullName = createElement("p", `${this.name} ${this.surname}`, "passenger__name");
         const passengerAge = createElement("p", `Age: ${this.age}`);
-        const passengerPrice = createElement("p", `Price: $${this.price}`);
+        const passengerPrice = createElement("p", `$${this.price}`, "passenger__price");
         
         const passengerType = createElement("p", `Type: ${this.type}`);
         
@@ -235,7 +227,7 @@ class Group {
         const groupTotalPassengers = createElement("h4", `${totalPassengers} passengers total`);
         const groupTotalPrice = createElement("h4", `$${totalPrice}`, "price");
         const groupComposition = createElement("p", `Adults: ${this.adultAmount}, Children: ${this.childAmount}`); 
-        const groupInfo = createElement("div", null, "group-info");
+        const groupInfo = createElement("div", null, "group__info");
 
         groupInfo.append(groupNumber, groupTotalPassengers, groupComposition, groupTotalPrice);
         groupContainer.appendChild(groupInfo);
@@ -243,7 +235,7 @@ class Group {
 
     displayPassengers(groupContainer) {
         if (this.id === -1) return;
-        const passengersInfo = createElement("div", null, "passengers-info");
+        const passengersInfo = createElement("div", null, "passengers__info");
         this.passengers.map(passenger => passenger.info(passengersInfo));
         groupContainer.appendChild(passengersInfo);
     }
@@ -279,7 +271,7 @@ function createMultipleGroups(groupsAmount) {
 // --- LÓGICA DE INTERFAZ Y EVENTOS (No changes here, as it was already correct) ---
 
 let groups = [];
-const groupContainers = document.querySelectorAll(".group-container");
+const groupContainers = document.querySelectorAll(".group__container");
 const groupsButton = document.getElementById("groupsButton");
 const addRandomButton = document.getElementById("addRandomButton");
 
@@ -295,7 +287,7 @@ function displayAllGroups(groupsToDisplay) {
     }
 
     groupsToDisplay.filter(g => g.id !== -1).forEach((group) => { // Filtra grupos cancelados
-        const groupContainer = createElement("section", null, "group-container");
+        const groupContainer = createElement("section", null, "group__container");
         group.groupInfo(groupContainer);
         group.displayPassengers(groupContainer);
         mainContainer.appendChild(groupContainer);
@@ -311,7 +303,7 @@ groupsButton.addEventListener("click", function() {
     groups = createMultipleGroups(groupsAmount);
     displayAllGroups(groups);
 
-    const firstGroup = document.querySelector(".group-container:first-child");
+    const firstGroup = document.querySelector(".group__container:first-child");
     if (firstGroup) {
         firstGroup.scrollIntoView({ behavior: 'smooth' });
     }
@@ -326,7 +318,7 @@ addRandomButton.addEventListener("click", function() {
     }
     displayAllGroups(groups);
 
-    const lastGroup = document.querySelector(".group-container:last-child");
+    const lastGroup = document.querySelector(".group__container:last-child");
     if (lastGroup) {
         lastGroup.scrollIntoView({ behavior: 'smooth' });
     }
@@ -362,7 +354,7 @@ addSubmitButton.addEventListener("click", async function(event) {
             groups.push(newCustomGroup);
             displayAllGroups(groups);
 
-            const lastGroup = document.querySelector(".group-container:last-child");
+            const lastGroup = document.querySelector(".group__container:last-child");
             if (lastGroup) {
                 lastGroup.scrollIntoView({ behavior: 'smooth' });
             }
@@ -378,17 +370,4 @@ addSubmitButton.addEventListener("click", async function(event) {
 
 addCancelButton.addEventListener("click", function() {
     addDialog.close();
-});
-
-const locationButton = document.getElementById("locationButton");
-
-locationButton.addEventListener("click", function() {
-    const randomLocation = floorRandom(locations.length);
-    const locationElement = document.getElementById("location");
-    locationElement.textContent = locations[randomLocation];
-
-    const viewScroll = document.querySelector("#location");
-    if (viewScroll) {
-        viewScroll.scrollIntoView({ behavior: 'smooth' });
-    }
 });
