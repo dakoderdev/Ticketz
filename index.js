@@ -1,114 +1,131 @@
-let locations = [
-    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix",
-    "Rio de Janeiro", "Buenos Aires", "London", "Paris", "Tokyo",
-    "Sydney", "Cape Town", "Berlin", "Moscow", "Toronto",
-    "Dubai", "Mumbai", "Beijing", "Seoul", "Mexico City",
-    "São Paulo", "Madrid", "Rome", "Bangkok", "Istanbul"
-];
+const locations = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Rio de Janeiro",
+  "Buenos Aires",
+  "London",
+  "Paris",
+  "Tokyo",
+  "Sydney",
+  "Cape Town",
+  "Berlin",
+  "Moscow",
+  "Toronto",
+  "Dubai",
+  "Mumbai",
+  "Beijing",
+  "Seoul",
+  "Mexico City",
+  "São Paulo",
+  "Madrid",
+  "Rome",
+  "Bangkok",
+  "Istanbul",
+]
 
-let usedLocations = [];
+let usedLocations = []
 
-let capacities = [50, 75, 100, 200, 250];
+const capacities = [50, 75, 100, 200, 250]
 
-let containerColors = ["yellow","green","pink"];
+const containerColors = ["yellow", "green", "pink"]
 
-let TripID = 0;
+let TripID = 0
 
 function nextID() {
-    return TripID++;
+  return TripID++
 }
 
 function floorRandom(max) {
-    return Math.floor(Math.random() * max);
+  return Math.floor(Math.random() * max)
 }
 
 function skewedLowerRandom(max) {
-    if (max < 1) return 0;
-    const skewPower = 2;
-    let randomSkewed = Math.pow(Math.random(), skewPower);
-    const index = Math.min(Math.max(0, Math.floor(randomSkewed * max)), max - 1);
-    return index;
+  if (max < 1) return 0
+  const skewPower = 2
+  const randomSkewed = Math.pow(Math.random(), skewPower)
+  const index = Math.min(Math.max(0, Math.floor(randomSkewed * max)), max - 1)
+  return index
 }
 
 function createElement(tag, text, className) {
-    const el = document.createElement(tag);
-    if (text) el.textContent = text;
-    if (className) el.className = className;
-    return el;
+  const el = document.createElement(tag)
+  if (text) el.textContent = text
+  if (className) el.className = className
+  return el
 }
 
 function createRandomTrip() {
-    let location;
-    do {
-        location = locations[floorRandom(locations.length)];
-        if (usedLocations.length === locations.length) {
-            usedLocations = [];
-        }
-    } while (usedLocations.some(l => l === location));
-    usedLocations.push(location);
-    const capIndex = Math.max(0, skewedLowerRandom(capacities.length));
-    const capacity = capacities[capIndex];
-    const trip = new Trip(location, capacity);
-    return trip.info();
+  let location
+  do {
+    location = locations[floorRandom(locations.length)]
+    if (usedLocations.length === locations.length) {
+      usedLocations = []
+    }
+  } while (usedLocations.some((l) => l === location))
+  usedLocations.push(location)
+  const capIndex = Math.max(0, skewedLowerRandom(capacities.length))
+  const capacity = capacities[capIndex]
+  const trip = new Trip(location, capacity)
+  return trip.info()
 }
 
 function setAttributes(element, attributes) {
-    Object.entries(attributes).forEach(([name, value]) => {
-        element.setAttribute(name, value);
-    });
+  Object.entries(attributes).forEach(([name, value]) => {
+    element.setAttribute(name, value)
+  })
 }
 
 const SVG_COMMON_ATTRS = {
-    'xmlns': 'http://www.w3.org/2000/svg',
-    'width': '16',
-    'height': '16',
-    'viewBox': '0 0 24 24',
-    'fill': 'none',
-    'stroke': 'currentColor',
-    'stroke-width': '2.375',
-    'stroke-linecap': 'round',
-    'stroke-linejoin': 'round'
-};
+  xmlns: "http://www.w3.org/2000/svg",
+  width: "16",
+  height: "16",
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  "stroke-width": "2.375",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round",
+}
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
+const SVG_NS = "http://www.w3.org/2000/svg"
 
 function createEditIcon() {
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    setAttributes(svg, {
-        ...SVG_COMMON_ATTRS, // Spread the common attributes
-        'class': 'lucide lucide-pencil-icon lucide-pencil'
-    });
-    const path1 = document.createElementNS(SVG_NS, 'path');
-    path1.setAttribute('d', 'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z');
-    svg.appendChild(path1);
-    const path2 = document.createElementNS(SVG_NS, 'path');
-    path2.setAttribute('d', 'm15 5 4 4');
-    svg.appendChild(path2);
-    return svg;
+  const svg = document.createElementNS(SVG_NS, "svg")
+  setAttributes(svg, {
+    ...SVG_COMMON_ATTRS,
+    class: "lucide lucide-pencil-icon lucide-pencil",
+  })
+  const path1 = document.createElementNS(SVG_NS, "path")
+  path1.setAttribute(
+    "d",
+    "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+  )
+  svg.appendChild(path1)
+  const path2 = document.createElementNS(SVG_NS, "path")
+  path2.setAttribute("d", "m15 5 4 4")
+  svg.appendChild(path2)
+  return svg
 }
+
 function createDeleteIcon() {
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    setAttributes(svg, {
-        ...SVG_COMMON_ATTRS, // Spread the common attributes
-        'class': 'lucide lucide-trash-icon lucide-trash'
-    });
-    const path1 = document.createElementNS(SVG_NS, 'path');
-    path1.setAttribute('d', 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6');
-    svg.appendChild(path1);
-    const path2 = document.createElementNS(SVG_NS, 'path');
-    path2.setAttribute('d', 'M3 6h18');
-    svg.appendChild(path2);
-    const path3 = document.createElementNS(SVG_NS, 'path');
-    path3.setAttribute('d', 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2');
-    svg.appendChild(path3);
-    return svg;
-}
-// Your existing helper
-function createElement(tag, text, className) {
-    const el = document.createElement(tag);
-    if (text) el.textContent = text;
-    if (className) el.className = className;
-    return el;
+  const svg = document.createElementNS(SVG_NS, "svg")
+  setAttributes(svg, {
+    ...SVG_COMMON_ATTRS,
+    class: "lucide lucide-trash-icon lucide-trash",
+  })
+  const path1 = document.createElementNS(SVG_NS, "path")
+  path1.setAttribute("d", "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6")
+  svg.appendChild(path1)
+  const path2 = document.createElementNS(SVG_NS, "path")
+  path2.setAttribute("d", "M3 6h18")
+  svg.appendChild(path2)
+  const path3 = document.createElementNS(SVG_NS, "path")
+  path3.setAttribute("d", "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2")
+  svg.appendChild(path3)
+  return svg
 }
 
 /**
@@ -116,122 +133,198 @@ function createElement(tag, text, className) {
  * @returns {HTMLDivElement} The complete DOM element.
  */
 function createTripsButtonsContainer(randomColor) {
-    // 1. Create the Parent Div: <div class="trips__buttons">
-    const tripsButtonsDiv = createElement('div', null, 'trips__buttons');
+  const tripsButtonsDiv = createElement("div", null, "trips__buttons")
 
-    // 2. Create the EDIT Button and append the SVG
-    const editButton = createElement('button', null, 'trips__button');
-    editButton.id = 'trips__button--edit';
-    editButton.setAttribute("data-color", randomColor);
-    editButton.appendChild(createEditIcon());
+  const editButton = createElement("button", null, "trips__button")
+  editButton.id = "trips__button--edit"
+  editButton.setAttribute("data-color", randomColor)
+  editButton.appendChild(createEditIcon())
 
-    // 3. Create the DELETE Button and append the SVG
-    const deleteButton = createElement('button', null, 'trips__button');
-    deleteButton.id = 'trips__button--delete';
-    deleteButton.setAttribute("data-color", randomColor);
-    deleteButton.appendChild(createDeleteIcon());
+  const deleteButton = createElement("button", null, "trips__button")
+  deleteButton.id = "trips__button--delete"
+  deleteButton.setAttribute("data-color", randomColor)
+  deleteButton.appendChild(createDeleteIcon())
 
-    // 4. Append buttons to the container
-    tripsButtonsDiv.appendChild(editButton);
-    tripsButtonsDiv.appendChild(deleteButton);
+  tripsButtonsDiv.appendChild(editButton)
+  tripsButtonsDiv.appendChild(deleteButton)
 
-    return tripsButtonsDiv;
+  return tripsButtonsDiv
 }
 
-const tripsButtonEditSVG = createElement('svg');
+const tripsButtonEditSVG = createElement("svg")
 
 class Trip {
-    constructor(location, capacity) {
-        this.id = nextID();
-        this.location = location;
-        this.capacity = capacity;
-        this.currentPassengers = 0;
-        this.groups = [];
-        this.price = this.calculatePrice();
+  constructor(location, capacity) {
+    this.id = nextID()
+    this.location = location
+    this.capacity = capacity
+    this.currentPassengers = 0
+    this.groups = []
+    this.price = this.calculatePrice()
+  }
+
+  calculatePrice() {
+    return (50 + this.capacity * 2).toFixed(2)
+  }
+
+  updateGroups(groups) {
+    this.groups = groups
+    this.currentPassengers = groups.reduce((total, group) => {
+      return total + (group.amount || 0)
+    }, 0)
+  }
+
+  info() {
+    const title = createElement("h2", this.location, "trips__title")
+
+    const passengersText = `Pasajeros `
+    const span = createElement("span", `${this.currentPassengers}/${this.capacity}`)
+    const amount = createElement("h3", passengersText, "trips__amount")
+    amount.appendChild(span)
+
+    const price = createElement("p", `$${this.price}`, "trips__price")
+
+    const randomColor = containerColors[floorRandom(containerColors.length)]
+    const left = createElement("div", null, "trips__left")
+    left.setAttribute("data-color", randomColor)
+    left.append(title, amount, price)
+
+    const groupsContainer = createElement("div", null, "trips__groups")
+    const maxGroupSlots = 20
+    const actualGroups = this.groups.length
+
+    for (let i = 0; i < actualGroups && i < maxGroupSlots; i++) {
+      const group = createElement("div", null, "trips__group trips__group--filled")
+      groupsContainer.appendChild(group)
     }
 
-    calculatePrice() {
-        // Simple example; you can change formula
-        return (50 + this.capacity * 2).toFixed(2);
+    for (let i = actualGroups; i < maxGroupSlots; i++) {
+      const group = createElement("div", null, "trips__group")
+      groupsContainer.appendChild(group)
     }
 
-    info() {
-        // === LEFT SIDE ===
-        const title = createElement('h2', this.location, 'trips__title');
+    const buttons = createTripsButtonsContainer(randomColor)
 
-        const passengersText = `Pasajeros `;
-        const span = createElement('span', `${this.currentPassengers}/${this.capacity}`);
-        const amount = createElement('h3', passengersText, 'trips__amount');
-        amount.appendChild(span);
+    const aside = createElement("aside", null, "trips__aside")
+    aside.setAttribute("data-color", randomColor)
+    aside.append(groupsContainer, buttons)
 
-        const price = createElement('p', `$${this.price}`, 'trips__price');
-        
-        const randomColor = containerColors[floorRandom(containerColors.length)];
-        const left = createElement('div', null, 'trips__left');
-        left.setAttribute("data-color", randomColor);
-        left.append(title, amount, price);
+    const card = createElement("article", null, "trips__card")
+    card.append(left, aside)
 
-        // === GROUPS ===
-        const groupsContainer = createElement('div', null, 'trips__groups');
-        for (let i = 0; i < 20; i++) {
-            const group = createElement('div', null, 'trips__group');
-            groupsContainer.appendChild(group);
-        };
+    card.dataset.tripId = this.id
 
-        // === BUTTONS (using your helper) ===
-        const buttons = createTripsButtonsContainer(randomColor);
+    const editButton = card.querySelector("#trips__button--edit")
+    editButton.addEventListener("click", (e) => {
+      e.stopPropagation()
+      saveTripsToLocalStorage()
+      window.location.href = `group.html?tripId=${this.id}`
+    })
 
-        // === ASIDE ===
-        const aside = createElement('aside', null, 'trips__aside');
-        aside.setAttribute("data-color", randomColor);
-        aside.append(groupsContainer, buttons);
+    const deleteButton = card.querySelector("#trips__button--delete")
+    deleteButton.addEventListener("click", (e) => {
+      e.stopPropagation()
+      if (confirm(`Are you sure you want to delete the trip to ${this.location}?`)) {
+        allTrips = allTrips.filter((trip) => trip.id !== this.id)
+        saveTripsToLocalStorage()
+        renderAllTrips()
+      }
+    })
 
-        // === FINAL CARD ===
-        const card = createElement('article', null, 'trips__card');
-        card.append(left, aside);
+    return card
+  }
+}
 
-        // Optional: Add data attributes or IDs
-        card.dataset.tripId = this.id;
+function saveTripsToLocalStorage() {
+  const tripsData = allTrips.map((trip) => ({
+    id: trip.id,
+    location: trip.location,
+    capacity: trip.capacity,
+    currentPassengers: trip.currentPassengers,
+    groups: trip.groups,
+    price: trip.price,
+  }))
+  localStorage.setItem("trips", JSON.stringify(tripsData))
+  localStorage.setItem("nextTripID", TripID.toString())
+}
 
-        return card;
-    }
+function loadTripsFromLocalStorage() {
+  const tripsData = localStorage.getItem("trips")
+  const savedTripID = localStorage.getItem("nextTripID")
+
+  if (savedTripID) {
+    TripID = Number.parseInt(savedTripID, 10)
+  }
+
+  if (tripsData) {
+    const parsed = JSON.parse(tripsData)
+    return parsed.map((data) => {
+      const trip = Object.assign(new Trip(data.location, data.capacity), data)
+      return trip
+    })
+  }
+  return []
+}
+
+let allTrips = []
+
+function renderAllTrips() {
+  tripsGrid.innerHTML = ""
+  allTrips.forEach((trip) => {
+    tripsGrid.appendChild(trip.info())
+  })
 }
 
 // Logica de UI
 
-const randomizeTripButton = document.getElementById('nav__button--randomize-trip');
-const addTripButton = document.getElementById('nav__button--add-trip');
-const editTripButton = document.getElementById('trips__button--edit');
-const deleteTripButton = document.getElementById('trips__button--delete');
-const tripsGrid = document.getElementById('trips__grid');
-const dialogAddTrip = document.querySelector('.dialog--add-trip');
-const dialogAddTripCancel = document.querySelector('.dialog__button--cancel');
-const dialogAddTripSubmit = document.querySelector('.dialog__button--submit');
+const randomizeTripButton = document.getElementById("nav__button--randomize-trip")
+const addTripButton = document.getElementById("nav__button--add-trip")
+const editTripButton = document.getElementById("trips__button--edit")
+const deleteTripButton = document.getElementById("trips__button--delete")
+const tripsGrid = document.getElementById("trips__grid")
+const dialogAddTrip = document.querySelector(".dialog--add-trip")
+const dialogAddTripCancel = document.querySelector(".dialog__button--cancel")
+const dialogAddTripSubmit = document.querySelector(".dialog__button--submit")
 
-randomizeTripButton.addEventListener('click', () => {
-    tripsGrid.appendChild(createRandomTrip());
-});
+window.addEventListener("DOMContentLoaded", () => {
+  allTrips = loadTripsFromLocalStorage()
+  renderAllTrips()
+})
 
-addTripButton.addEventListener('click', () => {
-    dialogAddTrip.showModal();
-});
+randomizeTripButton.addEventListener("click", () => {
+  const tripElement = createRandomTrip()
+  const location = tripElement.querySelector(".trips__title").textContent
+  const capacityText = tripElement.querySelector(".trips__amount span").textContent
+  const capacity = Number.parseInt(capacityText.split("/")[1], 10)
 
-dialogAddTripCancel.addEventListener('click', () => {
-    dialogAddTrip.close();
-});
+  const tripObj = new Trip(location, capacity)
+  allTrips.push(tripObj)
+  saveTripsToLocalStorage()
+  renderAllTrips()
+})
 
-dialogAddTripSubmit.addEventListener('click', (event) => {
-    event.preventDefault();
-    const locationInput = document.getElementById('tripLocationInput');
-    const capacityInput = document.getElementById('tripCapacityInput');
-    const location = locationInput.value;
-    const capacity = parseInt(capacityInput.value, 10);
+addTripButton.addEventListener("click", () => {
+  dialogAddTrip.showModal()
+})
 
-    if (location && capacity) {
-        const trip = new Trip(location, capacity);
-        tripsGrid.appendChild(trip.info());
-        dialogAddTrip.close();
-        locationInput.value = '';
-        capacityInput.value = '';
-    }
-});
+dialogAddTripCancel.addEventListener("click", () => {
+  dialogAddTrip.close()
+})
+
+dialogAddTripSubmit.addEventListener("click", (event) => {
+  event.preventDefault()
+  const locationInput = document.getElementById("tripLocationInput")
+  const capacityInput = document.getElementById("tripCapacityInput")
+  const location = locationInput.value
+  const capacity = Number.parseInt(capacityInput.value, 10)
+
+  if (location && capacity) {
+    const trip = new Trip(location, capacity)
+    allTrips.push(trip)
+    saveTripsToLocalStorage()
+    renderAllTrips()
+    dialogAddTrip.close()
+    locationInput.value = ""
+    capacityInput.value = ""
+  }
+})

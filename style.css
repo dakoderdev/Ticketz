@@ -67,7 +67,13 @@ main {
 .main__directory {
     font-size: 1rem;
     font-weight: 600;
+    cursor: pointer;
     opacity: 0.2;
+}
+
+.main__directory:hover {
+    text-decoration: underline;
+
 }
 
 .trips__grid {
