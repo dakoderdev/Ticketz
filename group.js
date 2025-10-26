@@ -244,10 +244,10 @@ class Group {
       }
     } catch (error) {
       if (predefinedID === null) nextGroupID--
+      // 2. Log the error (optional, but helpful)
       console.error("Group creation aborted:", error.message)
-      this.passengers = null
-      this.id = -1
-      return
+      // 3. CRITICAL: Throw to stop object creation externally
+      throw new Error(`Group creation failed for ID ${this.id}.`)
     }
 
     this.price = this.calculateGroupPrice(this.passengers)
@@ -284,11 +284,22 @@ class Group {
 /* Logica de creacion de grupo fuera de los constructores */
 
 function generateRandomGroupComposition(maxSize) {
-  let totalSize = skewedLowerRandom(maxSize)
+  const currentPassengers = groups.reduce((total, group) => total + (group.amount || 0), 0)
+  const tripCapacity = currentTrip.capacity
+  const remainingCapacity = tripCapacity - currentPassengers
 
-  totalSize = Math.max(1, totalSize)
-  const adultAmount = floorRandom(totalSize) + 1
+  let potentialSize = skewedLowerRandom(maxSize)
+  potentialSize = Math.max(1, potentialSize)
+
+  let totalSize = Math.min(potentialSize, remainingCapacity)
+
+  if (totalSize <= 0) {
+      return { adultAmount: null, childAmount: null }
+  }
+
+  const adultAmount = Math.min(floorRandom(totalSize) + 1, totalSize);
   const childAmount = totalSize - adultAmount
+  
   return {
     adultAmount: adultAmount,
     childAmount: childAmount,
@@ -297,15 +308,74 @@ function generateRandomGroupComposition(maxSize) {
 
 function createStructuredGroup() {
   const composition = generateRandomGroupComposition(maxGroupSize)
+
+  // Check if group creation was impossible (due to no remaining capacity)
+  if (composition.adultAmount === null) {
+    // Return null to signal to the caller that no group was created
+    return null 
+  }
+  
+  // If capacity is available, create and return the new Group instance
   return new Group(composition.adultAmount, composition.childAmount)
 }
 
 function createMultipleGroups(groupsAmount) {
   const groups = []
   for (let i = 0; i < groupsAmount; i++) {
-    groups.push(createStructuredGroup())
+    const newGroup = createStructuredGroup()
+    
+    // Only push the group if it was successfully created (not null)
+    if (newGroup !== null) {
+      groups.push(newGroup)
+    } else {
+      // Since groups are added one by one, if one fails,
+      // it means the trip is full, so we can stop trying.
+      break; 
+    }
   }
   return groups
+}
+
+function rehydrateGroup(groupData) {
+  // If the group failed creation previously and was saved as a placeholder:
+  if (groupData.id === -1) {
+    return groupData;
+  }
+  
+  // 1. Re-hydrate passengers first
+  const rehydratedPassengers = groupData.passengers.map(pData => {
+    // Use the stored type to determine which class to use
+    if (pData.type === "Adult") {
+        // We have to use the Passenger base class constructor and manually set 'type'
+        const p = new Passenger(pData.name, pData.surname, pData.groupID, pData.age, 200);
+        p.id = pData.id; // Preserve the original ID
+        p.type = "Adult";
+        return p;
+    } else if (pData.type === "Child") {
+        const p = new Passenger(pData.name, pData.surname, pData.groupID, pData.age, 125);
+        p.id = pData.id; // Preserve the original ID
+        p.type = "Child";
+        return p;
+    }
+    // Fallback if type is missing, should not happen
+    return pData;
+  });
+
+  // 2. Re-instantiate the Group
+  const group = new Group(
+    groupData.adultAmount, 
+    groupData.childAmount, 
+    rehydratedPassengers, 
+    groupData.id
+  );
+  
+  // Update global IDs to avoid collision with new objects
+  nextGroupID = Math.max(nextGroupID, group.id + 1);
+  rehydratedPassengers.forEach(p => {
+    nextPassengerID = Math.max(nextPassengerID, p.id + 1);
+  });
+  
+  return group;
 }
 
 function loadTripFromLocalStorage(tripId) {
@@ -389,50 +459,95 @@ function displayAllGroups(groupsToDisplay) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search)
-  currentTripId = urlParams.get("tripId")
+  const urlParams = new URLSearchParams(window.location.search)
+  currentTripId = urlParams.get("tripId")
 
-  if (currentTripId) {
-    currentTrip = loadTripFromLocalStorage(currentTripId)
+  if (currentTripId) {
+   currentTrip = loadTripFromLocalStorage(currentTripId)
 
-    if (currentTrip) {
-      const locationElement = document.getElementById("location")
-      if (locationElement) {
-        locationElement.textContent = currentTrip.location
-      }
+   if (currentTrip) {
+    if (!currentTrip.color) {
+    const containerColors = ["yellow", "green", "pink"]
+    currentTrip.color = containerColors[floorRandom(containerColors.length)]
+    }
+    document.documentElement.setAttribute("data-color", currentTrip.color)
 
-      if (currentTrip.groups && currentTrip.groups.length > 0) {
 
-        displayAllGroups(groups) 
-      }
+    const locationElement = document.getElementById("location")
+    if (locationElement) locationElement.textContent = currentTrip.location
 
-      updateCapacityDisplay()
-    }
-  }
+
+    if (currentTrip.groups && currentTrip.groups.length > 0) {
+    groups = currentTrip.groups.map(rehydrateGroup)
+    }
+
+
+    displayAllGroups(groups)
+    updateCapacityDisplay()
+    }
+  }
 
 });
 
 groupsButton.addEventListener("click", () => {
-  nextPassengerID = 1
-  nextGroupID = 1
-
   const groupsAmount = Number.parseInt(document.getElementById("groupInput").value) || 1
+  const tripCapacity = currentTrip?.capacity || 0
 
-  groups = createMultipleGroups(groupsAmount)
+  // 🧹 Reset previous data — a full reroll
+  groups = []
+  nextGroupID = 1
+  nextPassengerID = 1
+
+  const newGroups = []
+  let totalPassengers = 0
+
+  for (let i = 0; i < groupsAmount; i++) {
+    const g = createStructuredGroup()
+    if (!g) break
+
+    // Stop if we’re about to exceed the total trip capacity
+    if (totalPassengers + g.amount > tripCapacity) {
+      console.warn("Reached trip capacity limit while randomizing groups.")
+      break
+    }
+
+    newGroups.push(g)
+    totalPassengers += g.amount
+  }
+
+  groups = newGroups
   displayAllGroups(groups)
 
-  const firstGroup = document.querySelector(".group__container:first-child")
-  if (firstGroup) {
-    firstGroup.scrollIntoView({ behavior: "smooth" })
+  if (groups.length > 0) {
+    const firstGroup = document.querySelector(".group__container:first-child")
+    if (firstGroup) {
+      firstGroup.scrollIntoView({ behavior: "smooth" })
+    }
+  } else {
+    alert("No groups were created — check your trip capacity or input.")
   }
 })
 
+
+
 addRandomButton.addEventListener("click", () => {
+  const currentPassengers = groups.reduce((sum, g) => sum + (g.amount || 0), 0)
+  const tripCapacity = currentTrip?.capacity || 0
+
+  if (currentPassengers >= tripCapacity) {
+    alert("Trip is already at full capacity. You can’t add more passengers.")
+    return
+  }
   const amountToAdd = Number.parseInt(document.getElementById("addInput").value) || 1
 
   for (let i = 0; i < amountToAdd; i++) {
     const newGroup = createStructuredGroup()
-    groups.push(newGroup)
+    if (newGroup !== null) {
+      groups.push(newGroup)
+    } else {
+      console.warn("Cannot add more random groups: Trip capacity reached.")
+      break; 
+    }
   }
   displayAllGroups(groups)
 
@@ -455,13 +570,20 @@ const currentDirectory = document.querySelector(".main__a--groups");
 
 
 backDirectory.addEventListener("click", () => {
-    window.location.href = "index.html"
+    window.location.href = "trip.html"
   })
 
 addButton.addEventListener("click", () => {
+  const currentPassengers = groups.reduce((sum, g) => sum + (g.amount || 0), 0)
+  const tripCapacity = currentTrip?.capacity || 0
+
+  if (currentPassengers >= tripCapacity) {
+    alert("Trip is already at full capacity. You can’t add more passengers.")
+    return
+  }
+
   addDialog.showModal()
 })
-
 
 function updateCurrentDirectoryName() {
     const tripName = currentTrip && (currentTrip.name || currentTrip.location)
@@ -474,32 +596,46 @@ updateCurrentDirectoryName()
 window.addEventListener("DOMContentLoaded", updateCurrentDirectoryName)
 
 addSubmitButton.addEventListener("click", async (event) => {
-    event.preventDefault()
-    const adultAmount = Number.parseInt(adultCountInput.value) || 1
-    const childAmount = Number.parseInt(childCountInput.value) || 0
-    const reservedGroupID = nextID("group")
+  event.preventDefault()
+  const adultAmount = Number.parseInt(adultCountInput.value) || 1
+  const childAmount = Number.parseInt(childCountInput.value) || 0
+  const totalToAdd = adultAmount + childAmount
 
-    try {
-        const passengers = await inputManually(reservedGroupID, adultAmount, childAmount)
+  const currentPassengers = groups.reduce((sum, g) => sum + (g.amount || 0), 0)
+  const tripCapacity = currentTrip?.capacity || 0
 
-        const newCustomGroup = new Group(adultAmount, childAmount, passengers, reservedGroupID)
+  // 🚫 Prevent overflow
+  if (currentPassengers + totalToAdd > tripCapacity) {
+    alert(
+      `Cannot add ${totalToAdd} passengers — trip capacity (${tripCapacity}) would be exceeded.\n` +
+      `Available space: ${tripCapacity - currentPassengers}`
+    )
+    return // do not proceed
+  }
 
-        if (newCustomGroup.id !== -1) {
-            groups.push(newCustomGroup)
-            displayAllGroups(groups)
+  const reservedGroupID = nextID("group")
 
-            const lastGroup = document.querySelector(".group__container:last-child")
-            if (lastGroup) {
-                lastGroup.scrollIntoView({ behavior: "smooth" })
-            }
-        }
-    } catch (err) {
-        nextGroupID--
-        console.warn("Group creation cancelled or failed:", err.message || err)
-    } finally {
-        addDialog.close()
+  try {
+    const passengers = await inputManually(reservedGroupID, adultAmount, childAmount)
+    const newCustomGroup = new Group(adultAmount, childAmount, passengers, reservedGroupID)
+
+    if (newCustomGroup.id !== -1) {
+      groups.push(newCustomGroup)
+      displayAllGroups(groups)
+
+      const lastGroup = document.querySelector(".group__container:last-child")
+      if (lastGroup) {
+        lastGroup.scrollIntoView({ behavior: "smooth" })
+      }
     }
+  } catch (err) {
+    nextGroupID--
+    console.warn("Group creation cancelled or failed:", err.message || err)
+  } finally {
+    addDialog.close()
+  }
 })
+
 
 addCancelButton.addEventListener("click", () => {
   addDialog.close()

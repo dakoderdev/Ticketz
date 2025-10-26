@@ -16,20 +16,17 @@
     --pink-input: #ffe7ef;
     --pink: #ffd1ea;
     --pink-hover: #ffb6d3;
-
-    /* To remove */
-    --primary-color: #FFF9B7;
-    --dark-color: #000;
 }
 
 .main__directory {
-    font-size: 1rem;
-    font-weight: 600;
-    opacity: 0.2;
+    font-size: 0.875rem;
+    color: rgb(0,0,0,0.2);
 }
 
 .main__a {
     cursor: pointer;
+    font-weight: 500;
+    color: rgb(0,0,0,0.6);
 }
 
 .main__a:hover {
@@ -150,6 +147,18 @@ main {
     height: fit-content;
 }
 
+[data-color="yellow"] .group__info {
+  background-color: var(--yellow);
+}
+
+[data-color="pink"] .group__info {
+  background-color: var(--pink);
+}
+
+[data-color="green"] .group__info {
+  background-color: var(--green);
+}
+
 @media (max-width: 950px) {
     .group__info {
         max-width: 100%;
@@ -211,6 +220,18 @@ h4 {
     padding: 0.5rem 1rem;
     text-align: center;
     margin-bottom:0.35rem;
+}
+
+[data-color="yellow"] .passenger__number {
+  background-color: var(--yellow);
+}
+
+[data-color="pink"] .passenger__number {
+  background-color: var(--pink);
+}
+
+[data-color="green"] .passenger__number {
+  background-color: var(--green);
 }
 
 .passenger__info p {

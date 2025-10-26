@@ -3,41 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticketz - Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">    <title>Ticketz</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Ticketz - Organize Your Group Trips</title>
 </head>
 <body>
-    <nav>
-        <img class="Logo" src="Logo.svg" />
-        <div>
-            <button id="nav__button--randomize-trip">Randomize Trip</button>
-            <button id="nav__button--add-trip">Add Trip</button>
+    <nav class="nav">
+        <img class="nav__logo" src="Logo.svg" alt="Ticketz Logo" />
+        <div class="nav__links">
+            <a href="#features" class="nav__link">Features</a>
+            <a href="#how-it-works" class="nav__link">How It Works</a>
+            <a href="trip.html" class="nav__button">Get Started</a>
         </div>
     </nav>
-    <main>
-        <span class="main__directory">Trips</span>
-        <section id="trips__grid" class="trips__grid">
+
+    <main class="main">
+        <section class="hero">
+            <div class="hero__content">
+                <h1 class="hero__title">Organize group trips with ease</h1>
+                <p class="hero__description">Ticketz helps you manage passengers, groups, and trip details all in one place. Perfect for tour operators, event organizers, and group coordinators.</p>
+                <div class="hero__buttons">
+                    <a href="trip.html" class="hero__button hero__button--primary">Start Organizing</a>
+                    <a href="#how-it-works" class="hero__button hero__button--secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero__visual">
+                <div class="hero__card hero__card--yellow">
+                    <div class="hero__card-header">
+                        <span class="hero__card-title">Rio de Janeiro</span>
+                        <span class="hero__card-capacity">45 passengers</span>
+                    </div>
+                    <div class="hero__card-groups">
+                        <div class="hero__card-group hero__card-group--filled">1</div>
+                        <div class="hero__card-group hero__card-group--filled">2</div>
+                        <div class="hero__card-group hero__card-group--filled">3</div>
+                        <div class="hero__card-group"></div>
+                        <div class="hero__card-group"></div>
+                    </div>
+                </div>
+            </div>
         </section>
-        <dialog class="dialog dialog--add-trip">
-            <form method="dialog" class="dialog__content">
-                <h3>Add New Trip</h3>
-                <div class="dialog__field">
-                    <label class="dialog__label" for="tripLocationInput">Trip Location</label>
-                    <input class="dialog__input" type="text" id="tripLocationInput" class="dialog__input" required>
+
+        <section class="features" id="features">
+            <h2 class="features__title">Everything you need to manage group trips</h2>
+            <div class="features__grid">
+                <div class="features__card features__card--green">
+                    <div class="features__icon">👥</div>
+                    <h3 class="features__card-title">Group Management</h3>
+                    <p class="features__card-description">Create and organize groups with custom capacities. Randomize or manually assign passengers to groups.</p>
                 </div>
-                <div class="dialog__field">
-                    <label class="dialog__label" for="tripCapacityInput">Capacity</label>
-                    <input class="dialog__input" type="number" id="tripCapacityInput" class="dialog__input" value="50" required>
+                <div class="features__card features__card--pink">
+                    <div class="features__icon">✈️</div>
+                    <h3 class="features__card-title">Trip Planning</h3>
+                    <p class="features__card-description">Set up trips with locations, capacities, and pricing. Track all your trips in one dashboard.</p>
                 </div>
-                <div class="dialog__buttons">
-                    <button type="button" class="dialog__button dialog__button--cancel">Cancel</button>
-                    <button type="submit" class="dialog__button dialog__button--submit">Add Trip</button>
+                <div class="features__card features__card--yellow">
+                    <div class="features__icon">📋</div>
+                    <h3 class="features__card-title">Passenger Details</h3>
+                    <p class="features__card-description">Store passenger information including names, ages, and pricing. Keep everything organized and accessible.</p>
                 </div>
-            </form>
-        </dialog>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <h2 class="how-it-works__title">How it works</h2>
+            <div class="how-it-works__steps">
+                <div class="how-it-works__step">
+                    <div class="how-it-works__number how-it-works__number--green">1</div>
+                    <h3 class="how-it-works__step-title">Create a trip</h3>
+                    <p class="how-it-works__step-description">Set your destination, capacity, and pricing details.</p>
+                </div>
+                <div class="how-it-works__arrow">→</div>
+                <div class="how-it-works__step">
+                    <div class="how-it-works__number how-it-works__number--pink">2</div>
+                    <h3 class="how-it-works__step-title">Add groups</h3>
+                    <p class="how-it-works__step-description">Create groups manually or let Ticketz randomize them for you.</p>
+                </div>
+                <div class="how-it-works__arrow">→</div>
+                <div class="how-it-works__step">
+                    <div class="how-it-works__number how-it-works__number--yellow">3</div>
+                    <h3 class="how-it-works__step-title">Manage passengers</h3>
+                    <p class="how-it-works__step-description">Add passenger details and track your trip capacity in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta__content">
+                <h2 class="cta__title">Ready to organize your next trip?</h2>
+                <p class="cta__description">Start managing your group trips more efficiently today.</p>
+                <a href="trip.html" class="cta__button">Get Started Now</a>
+            </div>
+        </section>
     </main>
-    <script src="index.js"></script>
-</body> 
+
+    <footer class="footer">
+        <div class="footer__content">
+            <img class="footer__logo" src="Logo.svg" alt="Ticketz Logo" />
+            <p class="footer__text">Organize group trips with ease</p>
+        </div>
+    </footer>
+</body>
 </html>

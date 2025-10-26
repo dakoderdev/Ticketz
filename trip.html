@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticketz - Dashboard</title>
+    <link rel="stylesheet" href="trip.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">    <title>Ticketz</title>
+
+</head>
+<body>
+    <nav>
+        <img class="Logo" src="Logo.png" />
+        <div>
+            <button id="nav__button--randomize-trip">Randomize Trip</button>
+            <button id="nav__button--add-trip">Add Trip</button>
+        </div>
+    </nav>
+    <main>
+        <span class="main__directory">Trips</span>
+        <section id="trips__grid" class="trips__grid">
+        </section>
+        <dialog class="dialog dialog--add-trip">
+            <form method="dialog" class="dialog__content">
+                <h3>Add New Trip</h3>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripLocationInput">Trip Location</label>
+                    <input class="dialog__input" type="text" id="tripLocationInput" class="dialog__input" required>
+                </div>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripCapacityInput">Capacity</label>
+                    <input class="dialog__input" type="number" id="tripCapacityInput" class="dialog__input" value="50" required>
+                </div>
+                <div class="dialog__buttons">
+                    <button type="button" class="dialog__button dialog__button--cancel">Cancel</button>
+                    <button type="submit" class="dialog__button dialog__button--submit">Add Trip</button>
+                </div>
+            </form>
+        </dialog>
+        <dialog class="dialog dialog--edit-trip">
+            <form method="dialog" class="dialog__content">
+                <h3>Edit Trip</h3>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripEditLocationInput">Trip Location</label>
+                    <input class="dialog__input" type="text" id="tripEditLocationInput" required>
+                </div>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="tripEditCapacityInput">Capacity</label>
+                    <input class="dialog__input" type="number" id="tripEditCapacityInput" value="50" required>
+                </div>
+                <div class="dialog__buttons">
+                    <button type="button" class="dialog__button dialog__button--cancel">Cancel</button>
+                    <button type="submit" class="dialog__button dialog__button--submit">Save Changes</button>
+                </div>
+            </form>
+        </dialog>
+
+    </main>
+    <script src="trip.js"></script>
+</body> 
+</html>
