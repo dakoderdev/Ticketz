@@ -7,6 +7,11 @@
     font-family: 'Inter', sans-serif;
 }
 
+a {
+    display: flex;
+    align-items: center;
+}
+
 :root {
     --dark-border-20: rgb(34, 34, 34, 0.2);
     --dark-border-8: rgb(34, 34, 34, 0.08);
