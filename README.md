@@ -24,4 +24,4 @@ Una simple prueba de mis habilidades en **JavaScript**, donde busco simular un s
 
 * Permitir la edición de pasajeros dentro de grupos existentes.
 * Mejorar el estilo de la página principal (*landing page*).
-* Potencialmente agregar nuevas funciones visuales o estadísticas.
+* Potencialmente agregar nuevos datos o valores que hagan el sistema más detallado y realista.
