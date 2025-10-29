@@ -109,6 +109,7 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
+  text-wrap: nowrap;
   text-decoration: none;
   transition: color 0.3s;
 }
@@ -121,6 +122,7 @@ body {
   padding: 0.625rem 1.5rem;
   background-color: var(--yellow);
   color: var(--text-on-accent);
+  text-wrap: nowrap;
   border-radius: 99rem;
   font-size: 0.875rem;
   font-weight: 600;
@@ -402,6 +404,18 @@ body {
   border: none;
 }
 
+.hero__card--yellow .hero__card-group--filled {
+  color: var(--yellow);
+}
+
+.hero__card--pink .hero__card-group--filled {
+  color: var(--pink);
+}
+
+.hero__card--green .hero__card-group--filled {
+  color: var(--green);
+}
+
 @media (min-width: 900px) {
     /* Target both the base container AND the specific color class */
     .hero__card-container--pink,
@@ -498,6 +512,7 @@ body {
 
 .how-it-works__steps {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 2rem;
@@ -650,7 +665,39 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .nav {
+    gap: 3rem;
+  }
+
+  .hero__title {
+    font-size: 3rem;
+  }
+
+  .features__grid {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+}
+
+/* Improved mobile responsiveness with better scaling */
 @media (max-width: 768px) {
+  .nav {
+    gap: 1rem;
+    left:50%;
+    top:0;
+    width: 100%;
+    border-radius: 0;
+    justify-content: space-between;
+  }
+
+  .nav__links {
+    gap: 1rem;
+  }
+
+  .nav__link {
+    display: none;
+  }
+
   .hero {
     flex-direction: column;
     padding: 4rem 1rem;
@@ -658,6 +705,43 @@ body {
 
   .hero__title {
     font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .hero__visual {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .hero__card:first-child {
+    max-width: 20rem;
+  }
+
+  .hero__card-title {
+    font-size: 1.5rem;
+  }
+  .hero__card-group {
+    display: none;
+  }
+
+  .hero__card-group--filled {
+    display: flex;
+  }
+
+  .hero__card-image {
+    max-height: 7rem;
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  .hero__button {
+    width: 100%;
+    text-align: center;
   }
 
   .features {
@@ -670,15 +754,152 @@ body {
     font-size: 2rem;
   }
 
+  .features__grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .how-it-works {
+    padding: 4rem 1rem;
+  }
+
+  .how-it-works__number {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
   .how-it-works__arrow {
     display: none;
   }
 
-  .nav__links {
-    gap: 1rem;
+  .how-it-works__steps {
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .nav__link {
-    display: none;
+  .how-it-works__step {
+    align-items: baseline;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .how-it-works__step-title {
+    text-align: start;
+  }
+
+  .how-it-works__step-description {
+    text-align: start;
+  }
+
+  .cta {
+    padding: 4rem 1rem;
+  }
+
+  .cta__content {
+    padding: 3rem 1.5rem;
+  }
+}
+
+/* Added small mobile breakpoint for very small screens */
+@media (max-width: 480px) {
+
+  .nav__logo {
+    height: 1.25rem;
+    width: fit-content;
+  }
+
+  .nav__button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .hero {
+    padding: 3rem 0.75rem;
+  }
+
+  .hero__title {
+    font-size: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .hero__description {
+    font-size: 0.8125rem;
+  }
+
+  .hero__card:first-child {
+    max-width: 16rem;
+  }
+
+  .hero__card {
+    padding: 0.75rem;
+  }
+
+  .hero__card-title {
+    font-size: 1.25rem;
+  }
+
+  .hero__card-capacity {
+    font-size: 0.75rem;
+  }
+
+  .hero__card-groups {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+  }
+
+  .hero__card-image {
+    max-height: 5rem;
+  }
+
+  .features {
+    padding: 3rem 0.75rem;
+  }
+
+  .features__title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .features__card {
+    padding: 1.5rem;
+  }
+
+  .features__icon {
+    font-size: 2rem;
+  }
+
+  .how-it-works {
+    padding: 3rem 0.75rem;
+  }
+
+  .how-it-works__title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .how-it-works__step {
+    min-width: 100%;
+  }
+
+  .cta {
+    padding: 3rem 0.75rem;
+  }
+
+  .cta__content {
+    padding: 2rem 1rem;
+  }
+
+  .cta__title {
+    font-size: 1.75rem;
+  }
+
+  .cta__description {
+    font-size: 1rem;
+  }
+
+  .footer {
+    padding: 2rem 0.75rem;
   }
 }
