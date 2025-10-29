@@ -5,6 +5,7 @@
     scroll-behavior: smooth;
     scroll-padding: 5.292rem;
     font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
 }
 
 a {
@@ -12,61 +13,117 @@ a {
     align-items: center;
 }
 
+/* Base Variables - Expanded to include all variables from the index.html stylesheet */
 :root {
-    --dark-border-20: rgb(34, 34, 34, 0.2);
-    --dark-border-8: rgb(34, 34, 34, 0.08);
+    --primary-color: #000;
+    --secondary-color: #fff;
+    --background-color: #fafafa;
+    --primary-color-80: rgb(from var(--primary-color) r g b / 0.8);
+    --primary-color-70: rgb(from var(--primary-color) r g b / 0.7);
+    --primary-color-50: rgb(from var(--primary-color) r g b / 0.5);
+    --primary-color-30: rgb(from var(--primary-color) r g b / 0.3);
+    --secondary-color-95: rgb(from var(--secondary-color) r g b / 0.95);
+    --secondary-color-02: rgb(from var(--secondary-color) r g b / 0.02);
+    --text-primary: var(--primary-color);
+    --text-secondary: var(--primary-color-70);
+    --text-tertiary: var(--primary-color-50);
+    --text-on-accent: #000; /* Dark text for bright backgrounds */
+    --border-light: rgb(34, 34, 34, 0.08);
+    --border-medium: rgb(34, 34, 34, 0.2);
+    --shadow-sm: 0 2px 12px rgb(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 24px rgb(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgb(0, 0, 0, 0.08);
+    
     --green: #CCFFBD;
     --green-hover: #B3FF9C;
     --yellow: #FFF9B7;
-    --pink-input: #ffe7ef;
+    --yellow-hover: #FFF491;
+    --pink-input: #ffe7ef; /* New variable */
     --pink: #ffd1ea;
     --pink-hover: #ffb6d3;
+
+    /* Removed old specific border/dark color variables and replaced them with the new system */
 }
 
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #fff;
+        --secondary-color: oklch(14.5% 0 0);
+        --background-color: oklch(16.5% 0 0);
+        --secondary-color-02: rgb(from var(--secondary-color) r g b / 0.02);
+        --text-on-accent: #000; /* Keep dark text on bright accents */
+        --border-light: rgb(100, 100, 100, 0.2);
+        --border-medium: rgb(100, 100, 100, 0.3);
+        --shadow-sm: 0 2px 12px rgb(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 24px rgb(0, 0, 0, 0.3);
+        --shadow-lg: 0 8px 24px rgb(0, 0, 0, 0.4);
+    }
+}
+
+/* Scrollbar hiding (retained) */
+*::-webkit-scrollbar {
+    display: none;
+}
+* {
+    scrollbar-width: none;
+}
+
+/* Top Directory */
 .main__directory {
     font-size: 0.875rem;
-    color: rgb(0,0,0,0.2);
+    color: var(--text-tertiary); /* Used tertiary for lightest text */
 }
 
 .main__a {
     cursor: pointer;
     font-weight: 500;
-    color: rgb(0,0,0,0.6);
+    color: var(--text-secondary); /* Used secondary for regular directory text */
 }
 
 .main__a:hover {
     text-decoration: underline;
 }
 
+/* Body and Main Content */
 body {
     display: grid;
     gap: 0.75rem;
     padding:0.625rem;
+    background-color: var(--background-color);
 }
 
+main {
+    display: grid;
+    gap: 0.625rem;
+}
+
+/* Navigation */
 nav {
     position: fixed;
     z-index: 10;
     display: flex;
     align-items: center;
     bottom: 0.625rem;
-    border: 1px solid var(--dark-border-8);
+    border: 1px solid var(--border-light); /* Used border variable */
     border-radius: 99rem;
     gap: 1rem;
     left: 50%;
     transform: translateX(-50%);
     padding:0.5rem;
     padding-left: 0;
-    background-color: white;
-    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.16);
+    background-color: var(--secondary-color); /* Used secondary color */
+    box-shadow: var(--shadow-md); /* Used shadow variable */
 }
 
-nav img {
+.nav__logo {
     height:1rem;
     padding: 0 1.125rem;
-    border-right: 1px solid var(--dark-border-20); 
+    width: fit-content;
+    border-right: 1px solid var(--border-medium); /* Used border variable */
 }
 
+/* Buttons and Button Group */
 .button__group {
     display: flex;
 }
@@ -77,6 +134,7 @@ nav img {
     border:none;
     border-radius: 99rem;
     background-color: var(--pink);
+    color: var(--text-on-accent); /* Text on colored background is dark */
     transition: all 0.3s;
     width: fit-content;
     cursor: pointer; 
@@ -103,34 +161,29 @@ nav img {
     border: none;
     border-radius: 0 99rem 99rem 0;
     background-color: var(--pink-input);
-    color:var(--dark-color);
+    color: var(--text-on-accent); /* Input text is dark on pink background */
     padding: 0; 
 }
 
 .button__group input::-webkit-outer-spin-button,
 .button__group input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
-
 
 .button__group input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-
-main {
-    display: grid;
-    gap: 0.625rem;
-}
-
+/* Group Card Styles */
 .group__container {
     flex-direction: row;
     width:100%;
     display: flex;
     gap: 0.625rem;
-    border: 1px solid var(--dark-border-8);
-    box-shadow: 0 2px 12px rgb(0, 0, 0, 0.01);
+    background-color: var(--secondary-color); /* Card background */
+    border: 1px solid var(--border-light); /* Used border variable */
+    box-shadow: var(--shadow-sm); /* Used shadow variable */
     border-radius: 1rem;
     padding:0.5rem;
 }
@@ -145,6 +198,7 @@ main {
     display:flex;
     flex-direction: column;
     background-color: var(--yellow);
+    color: var(--text-on-accent); /* Info box text is dark */
     padding: 0.75rem;
     border-radius: 0.5rem;
     width: 100%;
@@ -153,15 +207,15 @@ main {
 }
 
 [data-color="yellow"] .group__info {
-  background-color: var(--yellow);
+    background-color: var(--yellow);
 }
 
 [data-color="pink"] .group__info {
-  background-color: var(--pink);
+    background-color: var(--pink);
 }
 
 [data-color="green"] .group__info {
-  background-color: var(--green);
+    background-color: var(--green);
 }
 
 @media (max-width: 950px) {
@@ -170,15 +224,17 @@ main {
     }
 }
 
+/* Typography inside Group Info */
 .main__capacity {
-  font-size: 0.9rem;
-  color: #666;
-  text-align: center;
-  padding-bottom: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--text-primary); /* Capacity text is dark on colored background */
+    text-align: center;
+    padding-bottom: 1.25rem;
 }
 
 h2 {
     text-align: center;
+    color: var(--text-primary);
     font-size: 4rem;
     font-weight:400;
 }
@@ -186,28 +242,32 @@ h2 {
 .group__info h3 {
     font-size: 1.5rem;
     width: fit-content;
-    border-bottom: 1px dashed #000;
+    border-bottom: 1px dashed var(--text-on-accent); /* Dashed border is dark */
     font-weight: 700;
+    color: var(--text-on-accent);
 }
 
 h4 {
     font-size: 0.875rem;
+    color: var(--text-on-accent);
     font-weight: 500;
 }
 
 .group__info p {
     font-size: 0.75rem;
+    color: var(--text-on-accent);
     font-weight: 400;
 }
 
 .price {
     font-size: 2.25rem;
+    color: var(--text-on-accent);
     font-weight: 300;
     padding-top: 1.375rem;
     text-align: end;
 }
 
-
+/* Passenger Info */
 .passengers__info {
     display: grid;
     flex-grow:1;
@@ -221,6 +281,7 @@ h4 {
 
 .passenger__number {
     background-color: var(--yellow);
+    color: var(--text-on-accent); /* Passenger number text is dark on colored background */
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     text-align: center;
@@ -228,15 +289,15 @@ h4 {
 }
 
 [data-color="yellow"] .passenger__number {
-  background-color: var(--yellow);
+    background-color: var(--yellow);
 }
 
 [data-color="pink"] .passenger__number {
-  background-color: var(--pink);
+    background-color: var(--pink);
 }
 
 [data-color="green"] .passenger__number {
-  background-color: var(--green);
+    background-color: var(--green);
 }
 
 .passenger__info p {
@@ -255,6 +316,7 @@ h4 {
     font-size: 1.25rem;
 }
 
+/* Dialog (Modal) Styles */
 .dialog {
     left: 50%;
     top: 50%;
@@ -263,9 +325,11 @@ h4 {
     padding: 1.5rem;
     border-radius: 1rem;
     border: none;
-    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.16);
+    background-color: var(--secondary-color); /* Dialog background */
+    box-shadow: var(--shadow-md); /* Used shadow variable */
     width:100%;
     max-width: 26rem;
+    color: var(--text-primary);
 }
 
 .dialog:open {
@@ -274,6 +338,7 @@ h4 {
 
 .dialog::backdrop {
     backdrop-filter: blur(2px);
+    background-color: var(--primary-color-30); /* Darker backdrop with opacity */
 }
 
 .dialog__content {
@@ -281,6 +346,10 @@ h4 {
     width: 100%;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.dialog__content h3 {
+    color: var(--text-primary);
 }
 
 .dialog__fields {
@@ -299,11 +368,14 @@ h4 {
 .dialog__label {
     font-size: 0.875rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .dialog__input {
     padding: 0.625rem 0.75rem;
-    border: 1px solid var(--dark-border-20);
+    border: 1px solid var(--border-medium); /* Used border variable */
+    background-color: var(--background-color); /* Input background */
+    color: var(--text-primary); /* Input text color */
     width: 100%;
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -320,7 +392,8 @@ h4 {
     border: none;
     border-radius: 0.5rem;
     background-color: transparent;
-    border: 1px solid var(--dark-border-20);
+    border: 1px solid var(--border-medium); /* Used border variable */
+    color: var(--text-primary);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
@@ -329,5 +402,6 @@ h4 {
 
 .dialog__button--submit {
     background-color: var(--pink);
+    color: var(--text-on-accent); /* Submit button text is dark on colored background */
     border: none;
 }
