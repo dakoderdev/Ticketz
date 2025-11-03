@@ -40,6 +40,13 @@
   --pink: #ffd1ea;
   --pink-hover: #ffd8e7;
   --pink-deep: #f35894;
+
+  --pink-number-bg: rgb(from var(--pink-deep) r g b / 0.5);
+  --pink-number-pr: #861043;
+  --green-number-bg: rgb(from var(--green-deep) r g b / 0.5);
+  --green-number-pr: #0d5425;
+  --yellow-number-bg: rgb(from var(--yellow-deep) r g b / 0.5);
+  --yellow-number-pr: #733e0a;
 }
 
 /* Improved dark mode with better contrast and readability */
@@ -60,6 +67,13 @@
     --shadow-lg: 0 8px 24px rgb(0, 0, 0, 0.4);
 
     --yellow-deep: rgba(250, 233, 82, 0.6);
+
+    --pink-number-bg: rgb(from var(--pink-deep) r g b / 0.1);
+    --pink-number-pr: var(--pink);
+    --green-number-bg: rgb(from var(--green-deep) r g b / 0.1);
+    --green-number-pr: var(--green);
+    --yellow-number-bg: rgb(from var(--yellow-deep) r g b / 0.1);
+    --yellow-number-pr: var(--yellow);
   }
 }*/
 
@@ -548,18 +562,18 @@ body {
 }
 
 .how-it-works__number--green {
-  color: var(--green);
-  background-color: rgb(from var(--green-deep) r g b / 0.1);
+  color: var(--green-number-pr);
+  background-color: var(--green-number-bg);
 }
 
 .how-it-works__number--pink {
-  color: var(--pink);
-  background-color: rgb(from var(--pink-deep) r g b / 0.1);
+  color: var(--pink-number-pr);
+  background-color: var(--pink-number-bg);
 }
 
 .how-it-works__number--yellow {
-  color: var(--yellow);
-  background-color: rgb(from var(--yellow-deep) r g b / 0.1);
+  color: var(--yellow-number-pr);
+  background-color: var(--yellow-number-bg);
 }
 
 .how-it-works__step-title {
