@@ -77,7 +77,7 @@
             </div>
         </form>
     </dialog>
-    <dialog class="dialog" id="passengerDialog">
+    <dialog class="dialog" id="addPassengerDialog">
         <form method="dialog" class="dialog__content">
             <h3>Add Passenger 00</h3>
             <div class="dialog__fields">
@@ -94,9 +94,48 @@
                 <label class="dialog__label" for="ageInput">Age</label>
                 <input class="dialog__input" type="number" id="ageInput" class="dialog-input" required>
             </div>
+            <div class="dialog__field">
+                <label class="dialog__label" for="genderInput">Gender</label>
+                <select class="dialog__input" id="genderInput" required>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="X">Other</option>
+                </select>
+            </div>
             <div class="dialog__buttons">
                 <button class="dialog__button" type="button" id="passengerCancelButton">Cancel</button>
                 <button class="dialog__button dialog__button--submit" type="submit" id="passengerSubmitButton" class="primary-action">Add Group</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog class="dialog" id="editPassengerDialog">
+        <form method="dialog" class="dialog__content">
+            <h3>Add Passenger 00</h3>
+            <div class="dialog__fields">
+                <div class="dialog__field">
+                    <label class="dialog__label" for="EditNameInput">Name</label>
+                    <input class="dialog__input" type="text" id="EditNameInput" class="dialog-input" required>
+                </div>
+                <div class="dialog__field">
+                    <label class="dialog__label" for="EditSurnameInput">Last name</label>
+                    <input class="dialog__input" type="text" id="EditSurnameInput" class="dialog-input" required>
+                </div>
+            </div>
+            <div class="dialog__field">
+                <label class="dialog__label" for="EditAgeInput">Age</label>
+                <input class="dialog__input" type="number" id="EditAgeInput" class="dialog-input" required>
+            </div>
+            <div class="dialog__field">
+                <label class="dialog__label" for="EditGenderInput">Gender</label>
+                <select class="dialog__input" id="EditGenderInput" required>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="X">Other</option>
+                </select>
+            </div>
+            <div class="dialog__buttons">
+                <button class="dialog__button" type="button" id="EditPassengerCancelButton">Cancel</button>
+                <button class="dialog__button dialog__button--submit" type="submit" id="EditPassengerSubmitButton" class="primary-action">Edit Passenger</button>
             </div>
         </form>
     </dialog>

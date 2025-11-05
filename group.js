@@ -1,50 +1,43 @@
 const people = {
-  name: [
-    "Doja",
-    "Bryan",
-    "Emma",
-    "Carlos",
-    "Tyra",
-    "Sophia",
-    "Liam",
-    "Mia",
-    "Noah",
-    "Olivia",
-    "Ethan",
-    "Ava",
-    "James",
-    "Isabella",
-    "Lucas",
-    "Charlotte",
-    "Mason",
-    "Amelia",
-    "Benjamin",
-    "Harper",
-    "Salem",
+  maleNames: [
+    "Bryan", "Carlos", "Liam", "Noah", "Ethan", "James",
+    "Lucas", "Mason", "Benjamin", "Salem",
+    "Alexander", "Daniel", "William", "Michael", "Jacob",
+    "Logan", "Henry", "Samuel", "David", "Matthew",
+    "Joseph", "Levi", "Owen", "Elijah", "Aiden",
+    "Julian", "Gabriel", "Jack", "Ryan", "Caleb",
+    "Nathan", "Anthony", "Christian", "Dylan", "Isaac",
+    "Joshua", "Andrew", "Thomas", "Hunter", "Leo",
+    "Jason", "Evan", "Zachary", "Aaron", "Christopher",
+    "Dominic", "Xavier", "Grayson", "Miles", "Nicolas"
+  ],
+
+  femaleNames: [
+    "Doja", "Emma", "Tyra", "Sophia", "Mia", "Olivia",
+    "Ava", "Isabella", "Charlotte", "Amelia", "Harper",
+    "Ella", "Scarlett", "Grace", "Luna", "Chloe",
+    "Victoria", "Camila", "Aria", "Layla", "Penelope",
+    "Riley", "Nora", "Zoey", "Lily", "Hannah",
+    "Avery", "Evelyn", "Hazel", "Abigail", "Ellie",
+    "Stella", "Sofia", "Leah", "Audrey", "Violet",
+    "Lucy", "Paisley", "Claire", "Skylar", "Savannah",
+    "Brooklyn", "Eleanor", "Naomi", "Madison", "Ruby",
+    "Bella", "Serenity", "Mila", "Alexa", "Eva"
+  ],
+  neutralNames: [
+    "Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Skyler", "Dakota", "Cameron", "Reese"
   ],
   surname: [
-    "Benz",
-    "Hamilton",
-    "Smith",
-    "Doe",
-    "Lee",
-    "Ramirez",
-    "Anderson",
-    "Brown",
-    "Clark",
-    "Johnson",
-    "Martinez",
-    "Garcia",
-    "Rodriguez",
-    "Hernandez",
-    "Nguyen",
-    "Taylor",
-    "Wilson",
-    "Davis",
-    "Miller",
-    "Moore",
-    "Payne",
+    "Benz", "Hamilton", "Smith", "Doe", "Lee", "Ramirez",
+    "Anderson", "Brown", "Clark", "Johnson", "Martinez",
+    "Garcia", "Rodriguez", "Hernandez", "Nguyen", "Taylor",
+    "Wilson", "Davis", "Miller", "Moore", "Payne"
   ],
+  gender: [
+    "M",
+    "F",
+    "X"
+  ]
 }
 
 let nextGroupID = 1
@@ -78,66 +71,90 @@ function createElement(tag, text, className) {
 }
 
 function createRandomPassenger(groupID, type) {
-  const name = people.name[floorRandom(people.name.length)]
+  const random = Math.random()
+  let gender
+  if (random < 0.495) gender = "M"
+  else if (random < 0.99) gender = "F"
+  else gender = "X"
+
+  let namePool
+  if (gender === "M") {
+    namePool = [...people.maleNames, ...people.neutralNames]
+  } else if (gender === "F") {
+    namePool = [...people.femaleNames, ...people.neutralNames]
+  } else {
+    namePool = [
+      ...people.neutralNames
+    ]
+  }
+
+  const name = namePool[floorRandom(namePool.length)]
   const surname = people.surname[floorRandom(people.surname.length)]
 
+  // 👶 Create passenger
   if (type === "Adult") {
-    return new Adult(name, surname, groupID)
+    return new Adult(name, surname, gender, groupID)
   } else if (type === "Child") {
-    return new Child(name, surname, groupID)
+    return new Child(name, surname, gender, groupID)
   }
 }
 
+
+
 class Passenger {
-  constructor(name, surname, groupID, age, price) {
+  constructor(name, surname, groupID, age, price, gender) {
     this.id = nextID("passenger")
     this.name = name
     this.surname = surname
     this.groupID = groupID
     this.age = age
     this.price = price
+    this.gender = gender || "M"
   }
 
   info(passengersInfo) {
-    const passengerInfo = createElement("div", null, "passenger__info")
+    const passengerInfo = createElement("button", null, "passenger__info")
     const passengerNumber = createElement("h4", `Passenger ${this.id}`, "passenger__number")
     const passengerFullName = createElement("p", `${this.name} ${this.surname}`, "passenger__name")
-    const passengerAge = createElement("p", `Age: ${this.age}`)
+    const passengerGender = createElement("span", `${this.gender} - `)
+    const passengerType = createElement("span", `${this.type} - `)
+    const passengerAge = createElement("span", `${this.age}`)
     const passengerPrice = createElement("p", `$${this.price}`, "passenger__price")
 
-    const passengerType = createElement("p", `Type: ${this.type}`)
-
-    passengerInfo.append(passengerNumber, passengerFullName, passengerType, passengerAge, passengerPrice)
+    passengerInfo.append(passengerNumber, passengerFullName
+      , passengerGender, passengerType, passengerAge
+      , passengerPrice)
+    passengerInfo.setAttribute("id",`passenger__${this.groupID}-${this.id}`)
     passengersInfo.appendChild(passengerInfo)
   }
 }
 
 class Adult extends Passenger {
-  constructor(name, surname, groupID) {
+  constructor(name, surname, gender, groupID) {
     const ageMin = 18
     const ageMax = 65
     const age = floorRandom(ageMax - ageMin + 1) + ageMin
 
-    super(name, surname, groupID, age, 200)
+    super(name, surname, groupID, age, 200, gender)
     this.type = "Adult"
   }
 }
 
 class Child extends Passenger {
-  constructor(name, surname, groupID) {
+  constructor(name, surname, gender, groupID) {
     const ageMin = 5
     const ageMax = 17
     const age = floorRandom(ageMax - ageMin + 1) + ageMin
 
-    super(name, surname, groupID, age, 125)
+    super(name, surname, groupID, age, 125, gender)
     this.type = "Child"
   }
 }
 
-const passengerDialog = document.getElementById("passengerDialog")
+const addPassengerDialog = document.getElementById("addPassengerDialog")
 
 async function inputManually(groupID, adultAmount, childAmount) {
-  const dialog = passengerDialog
+  const dialog = addPassengerDialog
   const titleEl = dialog.querySelector("h3")
   const nameInputEl = dialog.querySelector("#nameInput")
   const surnameInputEl = dialog.querySelector("#surnameInput")
@@ -170,6 +187,7 @@ async function inputManually(groupID, adultAmount, childAmount) {
         const name = nameInputEl.value.trim()
         const surname = surnameInputEl.value.trim()
         const age = Number.parseInt(ageInputEl.value, 10)
+        const gender = document.getElementById("genderInput").value
 
         if (!name) {
           alert("Name cannot be empty.")
@@ -185,7 +203,7 @@ async function inputManually(groupID, adultAmount, childAmount) {
         }
 
         cleanup()
-        resolve({ name, surname, age })
+        resolve({ name, surname, age, gender })
       }
 
       function onCancel() {
@@ -205,7 +223,7 @@ async function inputManually(groupID, adultAmount, childAmount) {
     const promptMsg = `Add Adult ${i + 1} of ${adultAmount} (Group ${groupID})`
     const result = await askOne(promptMsg, 18, 120)
     if (result === null) throw new Error("Passenger creation cancelled.")
-    const p = new Passenger(result.name, result.surname, groupID, result.age, 200)
+    const p = new Passenger(result.name, result.surname, groupID, result.age, 200, result.gender)
     p.type = "Adult"
     passengers.push(p)
   }
@@ -215,7 +233,7 @@ async function inputManually(groupID, adultAmount, childAmount) {
     const promptMsg = `Add Child ${i + 1} of ${childAmount} (Group ${groupID})`
     const result = await askOne(promptMsg, 5, 17)
     if (result === null) throw new Error("Passenger creation cancelled.")
-    const p = new Passenger(result.name, result.surname, groupID, result.age, 125)
+    const p = new Passenger(result.name, result.surname, groupID, result.age, 125, result.gender)
     p.type = "Child"
     passengers.push(p)
   }
@@ -456,6 +474,7 @@ function displayAllGroups(groupsToDisplay) {
     saveTripToLocalStorage(currentTripId, groups)
     updateCapacityDisplay()
   }
+  updatePassengerInfoButton()
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -640,3 +659,98 @@ addSubmitButton.addEventListener("click", async (event) => {
 addCancelButton.addEventListener("click", () => {
   addDialog.close()
 })
+
+
+let passengerInfoArray = document.querySelectorAll(".passenger__info")
+let editPassengerDialog = document.getElementById("editPassengerDialog")
+const editNameInput = editPassengerDialog.querySelector("#EditNameInput")
+const editSurnameInput = editPassengerDialog.querySelector("#EditSurnameInput")
+const editAgeInput = editPassengerDialog.querySelector("#EditAgeInput")
+const editGenderInput = editPassengerDialog.querySelector("#EditGenderInput")
+const editCancelButton = editPassengerDialog.querySelector("#EditPassengerCancelButton")
+const editSubmitButton = editPassengerDialog.querySelector("#EditPassengerSubmitButton")
+
+
+function updatePassengerInfoButton() {
+  passengerInfoArray = document.querySelectorAll(".passenger__info")
+  
+  passengerInfoArray.forEach(button => {
+    button.addEventListener("click", () => {
+      // Extract passenger ID info from element ID
+      const idParts = button.id.split("__")[1].split("-")
+      const groupID = Number(idParts[0])
+      const passengerID = Number(idParts[1])
+
+      // Find the group and passenger objects
+      const group = groups.find(g => g.id === groupID)
+      if (!group) return
+      const passenger = group.passengers.find(p => p.id === passengerID)
+      if (!passenger) return
+
+      // --- Fill dialog with current info ---
+      editPassengerDialog.querySelector("h3").textContent = `Edit Passenger ${passenger.id}`
+      editNameInput.value = passenger.name
+      editSurnameInput.value = passenger.surname
+      editAgeInput.value = passenger.age
+      editGenderInput.value = passenger.gender
+
+      // Set min/max based on type
+      if (passenger.type === "Adult") {
+        editAgeInput.min = 18
+        editAgeInput.max = 120
+      } else {
+        editAgeInput.min = 5
+        editAgeInput.max = 17
+      }
+
+      editPassengerDialog.showModal()
+
+      // --- Handle Cancel ---
+      const onCancel = () => {
+        cleanup()
+      }
+
+      // --- Handle Submit ---
+      const onSubmit = (ev) => {
+        ev.preventDefault()
+        const newName = editNameInput.value.trim()
+        const newSurname = editSurnameInput.value.trim()
+        const newAge = Number(editAgeInput.value)
+        const newGender = editGenderInput.value
+
+        if (!newName || !newSurname || isNaN(newAge)) {
+          alert("Please fill all fields correctly.")
+          return
+        }
+
+        if (newAge < editAgeInput.min || newAge > editAgeInput.max) {
+          alert(`Age must be between ${editAgeInput.min} and ${editAgeInput.max}`)
+          return
+        }
+
+        // Update the passenger data
+        passenger.name = newName
+        passenger.surname = newSurname
+        passenger.age = newAge
+        passenger.gender = newGender
+
+        cleanup()
+
+        // Refresh display
+        displayAllGroups(groups)
+
+        saveTripToLocalStorage(currentTripId, groups)
+      }
+
+      function cleanup() {
+        editPassengerDialog.close()
+        editSubmitButton.removeEventListener("click", onSubmit)
+        editCancelButton.removeEventListener("click", onCancel)
+      }
+
+      // Attach listeners
+      editSubmitButton.addEventListener("click", onSubmit)
+      editCancelButton.addEventListener("click", onCancel)
+    })
+  })
+}
